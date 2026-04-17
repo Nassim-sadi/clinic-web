@@ -2,10 +2,14 @@
 import { users, roles } from '@/services/api'
 import UserModal from './UserModal.vue'
 import ConfirmDialog from '@core/components/ConfirmDialog.vue'
+import { useAuthStore } from '@/stores/auth'
 
 definePage({
   meta: { title: 'User Management' },
 })
+
+const authStore = useAuthStore()
+const currentUserId = computed(() => authStore.user?.id)
 
 const search = ref('')
 const usersList = ref([])
@@ -192,11 +196,15 @@ onMounted(() => {
             <IconBtn @click="openEditModal(user)">
               <VIcon icon="tabler-edit" />
             </IconBtn>
-            <IconBtn @click="toggleStatus(user)">
+            <IconBtn
+              :disabled="user.id === currentUserId"
+              @click="toggleStatus(user)"
+            >
               <VIcon icon="tabler-power" />
             </IconBtn>
             <IconBtn
               color="error"
+              :disabled="user.id === currentUserId"
               @click="confirmDelete(user)"
             >
               <VIcon icon="tabler-trash" />

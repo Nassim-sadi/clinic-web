@@ -35,7 +35,7 @@ const rules = {
 
 const v$ = useVuelidate(rules, form)
 
-const genderOptions = ['male', 'female', 'other']
+const genderOptions = ['male', 'female']
 const bloodGroupOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
 const fetchClinics = async () => {

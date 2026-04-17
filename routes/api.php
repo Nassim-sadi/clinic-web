@@ -64,7 +64,19 @@ Route::apiResource('encounters', EncounterController::class)->middleware('auth:s
 Route::apiResource('prescriptions', PrescriptionController::class)->middleware('auth:sanctum');
 Route::apiResource('bills', BillController::class)->middleware('auth:sanctum');
 Route::apiResource('medical-histories', MedicalHistoryController::class)->middleware('auth:sanctum');
-Route::apiResource('waiting-queue', WaitingQueueController::class)->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/waiting-queue', [WaitingQueueController::class, 'index']);
+    Route::post('/waiting-queue', [WaitingQueueController::class, 'store']);
+    Route::get('/waiting-queue/stats', [WaitingQueueController::class, 'stats']);
+    Route::get('/waiting-queue/display', [WaitingQueueController::class, 'display']);
+    Route::post('/waiting-queue/reorder', [WaitingQueueController::class, 'reorder']);
+    Route::post('/waiting-queue/{id}/call', [WaitingQueueController::class, 'call']);
+    Route::post('/waiting-queue/{id}/start', [WaitingQueueController::class, 'start']);
+    Route::post('/waiting-queue/{id}/complete', [WaitingQueueController::class, 'complete']);
+    Route::get('/waiting-queue/{id}', [WaitingQueueController::class, 'show']);
+    Route::put('/waiting-queue/{id}', [WaitingQueueController::class, 'update']);
+    Route::delete('/waiting-queue/{id}', [WaitingQueueController::class, 'destroy']);
+});
 Route::apiResource('custom-fields', CustomFieldController::class)->middleware('auth:sanctum');
 Route::get('/custom-fields/entity/{entityType}', [CustomFieldController::class, 'getByEntity'])->middleware('auth:sanctum');
 Route::get('/custom-fields/entity/{entityType}/values/{entityId}', [CustomFieldController::class, 'getEntityValues'])->middleware('auth:sanctum');
@@ -95,13 +107,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/bills/{bill}/download', [BillController::class, 'downloadPdf']);
 
     Route::get('/medical-histories/by-patient/{patient}', [MedicalHistoryController::class, 'byPatient']);
-
-    Route::get('/waiting-queue/stats', [WaitingQueueController::class, 'stats']);
-    Route::get('/waiting-queue/display', [WaitingQueueController::class, 'display']);
-    Route::post('/waiting-queue/reorder', [WaitingQueueController::class, 'reorder']);
-    Route::post('/waiting-queue/{id}/call', [WaitingQueueController::class, 'call']);
-    Route::post('/waiting-queue/{id}/start', [WaitingQueueController::class, 'start']);
-    Route::post('/waiting-queue/{id}/complete', [WaitingQueueController::class, 'complete']);
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::get('/notifications/unread-count', [NotificationController::class, 'unread']);
