@@ -229,10 +229,9 @@ watch(() => props.appointment, initForm)
               cols="12"
               md="4"
             >
-              <AppTextField
+              <AppTimePicker
                 v-model="form.start_time"
                 label="Start Time"
-                type="time"
                 :error-messages="v$.start_time.$errors.length ? v$.start_time.$errors[0].$message : []"
                 @blur="v$.start_time.$touch"
               />
@@ -242,10 +241,9 @@ watch(() => props.appointment, initForm)
               cols="12"
               md="4"
             >
-              <AppTextField
+              <AppTimePicker
                 v-model="form.end_time"
                 label="End Time"
-                type="time"
                 :error-messages="v$.end_time.$errors.length ? v$.end_time.$errors[0].$message : []"
                 @blur="v$.end_time.$touch"
               />
