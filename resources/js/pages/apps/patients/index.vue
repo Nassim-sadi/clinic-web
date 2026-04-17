@@ -1,6 +1,7 @@
 <script setup>
 import { patients } from '@/services/api'
 import PatientModal from './PatientModal.vue'
+import ConfirmDialog from '@core/components/ConfirmDialog.vue'
 
 definePage({
   meta: { title: 'Patients' },
@@ -18,6 +19,10 @@ const pagination = ref({
 
 const showModal = ref(false)
 const selectedPatient = ref(null)
+
+const showConfirmDialog = ref(false)
+const itemToDelete = ref(null)
+const deleteLoading = ref(false)
 
 const headers = [
   { title: 'Name', key: 'name' },
@@ -67,15 +72,26 @@ const onSaved = () => {
   fetchPatients()
 }
 
-const deletePatient = async id => {
-  if (confirm('Are you sure you want to delete this patient?')) {
-    try {
-      await patients.delete(id)
-      fetchPatients()
-    }
-    catch (error) {
-      console.error('Failed to delete patient:', error)
-    }
+const confirmDelete = patient => {
+  itemToDelete.value = patient
+  showConfirmDialog.value = true
+}
+
+const deletePatient = async () => {
+  if (!itemToDelete.value)
+    return
+
+  deleteLoading.value = true
+  try {
+    await patients.delete(itemToDelete.value.id)
+    fetchPatients()
+  }
+  catch (error) {
+    console.error('Failed to delete patient:', error)
+  }
+  finally {
+    deleteLoading.value = false
+    itemToDelete.value = null
   }
 }
 
@@ -144,23 +160,15 @@ onMounted(fetchPatients)
           <td>{{ patient.gender || 'N/A' }}</td>
           <td>{{ patient.date_of_birth || 'N/A' }}</td>
           <td>
-            <VBtn
-              icon
-              variant="text"
-              size="small"
-              @click="openEditModal(patient)"
-            >
+            <IconBtn @click="openEditModal(patient)">
               <VIcon icon="tabler-edit" />
-            </VBtn>
-            <VBtn
-              icon
-              variant="text"
-              size="small"
+            </IconBtn>
+            <IconBtn
               color="error"
-              @click="deletePatient(patient.id)"
+              @click="confirmDelete(patient)"
             >
               <VIcon icon="tabler-trash" />
-            </VBtn>
+            </IconBtn>
           </td>
         </tr>
         <tr v-if="patientsList.length === 0 && !loading">
@@ -192,6 +200,15 @@ onMounted(fetchPatients)
       :patient="selectedPatient"
       @saved="onSaved"
       @closed="closeModal"
+    />
+
+    <ConfirmDialog
+      v-model="showConfirmDialog"
+      title="Delete Patient"
+      :message="`Are you sure you want to delete ${itemToDelete?.name}?`"
+      confirm-text="Delete"
+      :loading="deleteLoading"
+      @confirm="deletePatient"
     />
   </Teleport>
 </template>

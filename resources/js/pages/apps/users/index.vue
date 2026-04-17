@@ -1,6 +1,7 @@
 <script setup>
 import { users, roles } from '@/services/api'
 import UserModal from './UserModal.vue'
+import ConfirmDialog from '@core/components/ConfirmDialog.vue'
 
 definePage({
   meta: { title: 'User Management' },
@@ -12,6 +13,10 @@ const loading = ref(false)
 const showModal = ref(false)
 const selectedUser = ref(null)
 const rolesList = ref([])
+
+const showConfirmDialog = ref(false)
+const itemToDelete = ref(null)
+const deleteLoading = ref(false)
 
 const headers = [
   { title: 'Name', key: 'name' },
@@ -85,15 +90,25 @@ const toggleStatus = async user => {
   }
 }
 
-const deleteUser = async user => {
-  if (!confirm(`Delete user ${user.name}?`))
+const confirmDelete = user => {
+  itemToDelete.value = user
+  showConfirmDialog.value = true
+}
+
+const deleteUser = async () => {
+  if (!itemToDelete.value)
     return
+  deleteLoading.value = true
   try {
-    await users.delete(user.id)
+    await users.delete(itemToDelete.value.id)
     fetchUsers()
   }
   catch (error) {
     console.error('Failed to delete user:', error)
+  }
+  finally {
+    deleteLoading.value = false
+    itemToDelete.value = null
   }
 }
 
@@ -180,7 +195,10 @@ onMounted(() => {
             <IconBtn @click="toggleStatus(user)">
               <VIcon icon="tabler-power" />
             </IconBtn>
-            <IconBtn @click="deleteUser(user)">
+            <IconBtn
+              color="error"
+              @click="confirmDelete(user)"
+            >
               <VIcon icon="tabler-trash" />
             </IconBtn>
           </td>
@@ -197,12 +215,23 @@ onMounted(() => {
     </VTable>
   </VCard>
 
-  <UserModal
-    v-if="showModal"
-    :user="selectedUser"
-    @saved="handleSaved"
-    @closed="closeModal"
-  />
+  <Teleport to="body">
+    <UserModal
+      v-if="showModal"
+      :user="selectedUser"
+      @saved="handleSaved"
+      @closed="closeModal"
+    />
+
+    <ConfirmDialog
+      v-model="showConfirmDialog"
+      title="Delete User"
+      :message="`Are you sure you want to delete ${itemToDelete?.name}?`"
+      confirm-text="Delete"
+      :loading="deleteLoading"
+      @confirm="deleteUser"
+    />
+  </Teleport>
 
   <VOverlay
     v-model="loading"

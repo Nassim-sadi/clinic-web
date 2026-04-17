@@ -1,6 +1,7 @@
 <script setup>
 import { prescriptions } from '@/services/api'
 import PrescriptionModal from './PrescriptionModal.vue'
+import ConfirmDialog from '@core/components/ConfirmDialog.vue'
 
 definePage({
   meta: { title: 'Prescriptions' },
@@ -11,6 +12,10 @@ const prescriptionsList = ref([])
 const loading = ref(false)
 const showModal = ref(false)
 const selectedPrescription = ref(null)
+
+const showConfirmDialog = ref(false)
+const itemToDelete = ref(null)
+const deleteLoading = ref(false)
 
 const headers = [
   { title: 'Patient', key: 'patient.name' },
@@ -65,15 +70,25 @@ const handleSaved = () => {
   fetchPrescriptions()
 }
 
-const deletePrescription = async prescription => {
-  if (!confirm(`Delete this prescription?`))
+const confirmDelete = prescription => {
+  itemToDelete.value = prescription
+  showConfirmDialog.value = true
+}
+
+const deletePrescription = async () => {
+  if (!itemToDelete.value)
     return
+  deleteLoading.value = true
   try {
-    await prescriptions.delete(prescription.id)
+    await prescriptions.delete(itemToDelete.value.id)
     fetchPrescriptions()
   }
   catch (error) {
     console.error('Failed to delete prescription:', error)
+  }
+  finally {
+    deleteLoading.value = false
+    itemToDelete.value = null
   }
 }
 
@@ -150,7 +165,10 @@ onMounted(fetchPrescriptions)
             <IconBtn @click="prescriptions.download(prescription.id)">
               <VIcon icon="tabler-download" />
             </IconBtn>
-            <IconBtn @click="deletePrescription(prescription)">
+            <IconBtn
+              color="error"
+              @click="confirmDelete(prescription)"
+            >
               <VIcon icon="tabler-trash" />
             </IconBtn>
           </td>
@@ -167,12 +185,23 @@ onMounted(fetchPrescriptions)
     </VTable>
   </VCard>
 
-  <PrescriptionModal
-    v-if="showModal"
-    :prescription="selectedPrescription"
-    @saved="handleSaved"
-    @closed="closeModal"
-  />
+  <Teleport to="body">
+    <PrescriptionModal
+      v-if="showModal"
+      :prescription="selectedPrescription"
+      @saved="handleSaved"
+      @closed="closeModal"
+    />
+
+    <ConfirmDialog
+      v-model="showConfirmDialog"
+      title="Delete Prescription"
+      message="Are you sure you want to delete this prescription?"
+      confirm-text="Delete"
+      :loading="deleteLoading"
+      @confirm="deletePrescription"
+    />
+  </Teleport>
 
   <VOverlay
     v-model="loading"

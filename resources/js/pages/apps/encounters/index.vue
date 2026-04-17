@@ -1,6 +1,7 @@
 <script setup>
 import { encounters } from '@/services/api'
 import EncounterModal from './EncounterModal.vue'
+import ConfirmDialog from '@core/components/ConfirmDialog.vue'
 
 definePage({
   meta: { title: 'Encounters' },
@@ -11,6 +12,10 @@ const encountersList = ref([])
 const loading = ref(false)
 const showModal = ref(false)
 const selectedEncounter = ref(null)
+
+const showConfirmDialog = ref(false)
+const itemToDelete = ref(null)
+const deleteLoading = ref(false)
 
 const headers = [
   { title: 'Patient', key: 'patient.name' },
@@ -66,15 +71,25 @@ const handleSaved = () => {
   fetchEncounters()
 }
 
-const deleteEncounter = async encounter => {
-  if (!confirm(`Delete this encounter?`))
+const confirmDelete = encounter => {
+  itemToDelete.value = encounter
+  showConfirmDialog.value = true
+}
+
+const deleteEncounter = async () => {
+  if (!itemToDelete.value)
     return
+  deleteLoading.value = true
   try {
-    await encounters.delete(encounter.id)
+    await encounters.delete(itemToDelete.value.id)
     fetchEncounters()
   }
   catch (error) {
     console.error('Failed to delete encounter:', error)
+  }
+  finally {
+    deleteLoading.value = false
+    itemToDelete.value = null
   }
 }
 
@@ -148,7 +163,10 @@ onMounted(fetchEncounters)
             <IconBtn @click="openEditModal(encounter)">
               <VIcon icon="tabler-edit" />
             </IconBtn>
-            <IconBtn @click="deleteEncounter(encounter)">
+            <IconBtn
+              color="error"
+              @click="confirmDelete(encounter)"
+            >
               <VIcon icon="tabler-trash" />
             </IconBtn>
           </td>
@@ -165,12 +183,23 @@ onMounted(fetchEncounters)
     </VTable>
   </VCard>
 
-  <EncounterModal
-    v-if="showModal"
-    :encounter="selectedEncounter"
-    @saved="handleSaved"
-    @closed="closeModal"
-  />
+  <Teleport to="body">
+    <EncounterModal
+      v-if="showModal"
+      :encounter="selectedEncounter"
+      @saved="handleSaved"
+      @closed="closeModal"
+    />
+
+    <ConfirmDialog
+      v-model="showConfirmDialog"
+      title="Delete Encounter"
+      message="Are you sure you want to delete this encounter?"
+      confirm-text="Delete"
+      :loading="deleteLoading"
+      @confirm="deleteEncounter"
+    />
+  </Teleport>
 
   <VOverlay
     v-model="loading"

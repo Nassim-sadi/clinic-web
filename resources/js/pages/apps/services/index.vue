@@ -1,6 +1,7 @@
 <script setup>
 import { services } from '@/services/api'
 import ServiceModal from './ServiceModal.vue'
+import ConfirmDialog from '@core/components/ConfirmDialog.vue'
 
 definePage({
   meta: { title: 'Services' },
@@ -12,6 +13,10 @@ const loading = ref(false)
 
 const showModal = ref(false)
 const selectedService = ref(null)
+
+const showConfirmDialog = ref(false)
+const itemToDelete = ref(null)
+const deleteLoading = ref(false)
 
 const headers = [
   { title: 'Name', key: 'name' },
@@ -55,15 +60,26 @@ const onSaved = () => {
   fetchServices()
 }
 
-const deleteService = async id => {
-  if (confirm('Are you sure you want to delete this service?')) {
-    try {
-      await services.delete(id)
-      fetchServices()
-    }
-    catch (error) {
-      console.error('Failed to delete service:', error)
-    }
+const confirmDelete = service => {
+  itemToDelete.value = service
+  showConfirmDialog.value = true
+}
+
+const deleteService = async () => {
+  if (!itemToDelete.value)
+    return
+
+  deleteLoading.value = true
+  try {
+    await services.delete(itemToDelete.value.id)
+    fetchServices()
+  }
+  catch (error) {
+    console.error('Failed to delete service:', error)
+  }
+  finally {
+    deleteLoading.value = false
+    itemToDelete.value = null
   }
 }
 
@@ -129,7 +145,7 @@ onMounted(fetchServices)
                 class="me-2"
               >
                 <VIcon
-                  icon="tabler-medical-services"
+                  icon="tabler-briefcase"
                   size="18"
                 />
               </VAvatar>
@@ -153,23 +169,15 @@ onMounted(fetchServices)
             </VChip>
           </td>
           <td>
-            <VBtn
-              icon
-              variant="text"
-              size="small"
-              @click="openEditModal(service)"
-            >
+            <IconBtn @click="openEditModal(service)">
               <VIcon icon="tabler-edit" />
-            </VBtn>
-            <VBtn
-              icon
-              variant="text"
-              size="small"
+            </IconBtn>
+            <IconBtn
               color="error"
-              @click="deleteService(service.id)"
+              @click="confirmDelete(service)"
             >
               <VIcon icon="tabler-trash" />
-            </VBtn>
+            </IconBtn>
           </td>
         </tr>
         <tr v-if="servicesList.length === 0 && !loading">
@@ -190,6 +198,15 @@ onMounted(fetchServices)
       :service="selectedService"
       @saved="onSaved"
       @closed="closeModal"
+    />
+
+    <ConfirmDialog
+      v-model="showConfirmDialog"
+      title="Delete Service"
+      :message="`Are you sure you want to delete ${itemToDelete?.name}?`"
+      confirm-text="Delete"
+      :loading="deleteLoading"
+      @confirm="deleteService"
     />
   </Teleport>
 </template>

@@ -1,6 +1,7 @@
 <script setup>
 import { bills } from '@/services/api'
 import BillModal from './BillModal.vue'
+import ConfirmDialog from '@core/components/ConfirmDialog.vue'
 
 definePage({
   meta: { title: 'Billing' },
@@ -11,6 +12,10 @@ const billsList = ref([])
 const loading = ref(false)
 const showModal = ref(false)
 const selectedBill = ref(null)
+
+const showConfirmDialog = ref(false)
+const itemToDelete = ref(null)
+const deleteLoading = ref(false)
 
 const headers = [
   { title: 'Invoice #', key: 'invoice_number' },
@@ -70,15 +75,25 @@ const handleSaved = () => {
   fetchBills()
 }
 
-const deleteBill = async bill => {
-  if (!confirm(`Delete bill ${bill.invoice_number}?`))
+const confirmDelete = bill => {
+  itemToDelete.value = bill
+  showConfirmDialog.value = true
+}
+
+const deleteBill = async () => {
+  if (!itemToDelete.value)
     return
+  deleteLoading.value = true
   try {
-    await bills.delete(bill.id)
+    await bills.delete(itemToDelete.value.id)
     fetchBills()
   }
   catch (error) {
     console.error('Failed to delete bill:', error)
+  }
+  finally {
+    deleteLoading.value = false
+    itemToDelete.value = null
   }
 }
 
@@ -152,7 +167,10 @@ onMounted(fetchBills)
             <IconBtn @click="openEditModal(bill)">
               <VIcon icon="tabler-edit" />
             </IconBtn>
-            <IconBtn @click="deleteBill(bill)">
+            <IconBtn
+              color="error"
+              @click="confirmDelete(bill)"
+            >
               <VIcon icon="tabler-trash" />
             </IconBtn>
           </td>
@@ -169,12 +187,23 @@ onMounted(fetchBills)
     </VTable>
   </VCard>
 
-  <BillModal
-    v-if="showModal"
-    :bill="selectedBill"
-    @saved="handleSaved"
-    @closed="closeModal"
-  />
+  <Teleport to="body">
+    <BillModal
+      v-if="showModal"
+      :bill="selectedBill"
+      @saved="handleSaved"
+      @closed="closeModal"
+    />
+
+    <ConfirmDialog
+      v-model="showConfirmDialog"
+      title="Delete Bill"
+      :message="`Are you sure you want to delete invoice ${itemToDelete?.invoice_number}?`"
+      confirm-text="Delete"
+      :loading="deleteLoading"
+      @confirm="deleteBill"
+    />
+  </Teleport>
 
   <VOverlay
     v-model="loading"

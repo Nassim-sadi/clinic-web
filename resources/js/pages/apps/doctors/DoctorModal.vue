@@ -233,11 +233,17 @@ watch(() => props.doctor, initForm)
               cols="12"
               md="6"
             >
-              <VSwitch
-                v-model="form.is_active"
-                label="Active"
-                color="success"
-              />
+              <VRow>
+                <VCol cols="6">
+                  <VCheckbox
+                    v-model="form.is_active"
+                    label="Active"
+                    color="success"
+                    density="compact"
+                    hide-details
+                  />
+                </VCol>
+              </VRow>
             </VCol>
 
             <VCol cols="12">
