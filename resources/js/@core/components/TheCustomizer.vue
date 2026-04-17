@@ -12,7 +12,6 @@ import {
   Theme,
 } from '@core/enums'
 import { useConfigStore } from '@core/stores/config'
-import horizontalLight from '@images/customizer-icons/horizontal-light.svg'
 import {
   AppContentLayoutNav,
   ContentWidth,
@@ -22,47 +21,25 @@ import {
   namespaceConfig,
 } from '@layouts/stores/config'
 import { themeConfig } from '@themeConfig'
-import borderSkin from '@images/customizer-icons/border-light.svg'
-import collapsed from '@images/customizer-icons/collapsed-light.svg'
-import compact from '@images/customizer-icons/compact-light.svg'
-import defaultSkin from '@images/customizer-icons/default-light.svg'
-import ltrSvg from '@images/customizer-icons/ltr-light.svg'
-import rtlSvg from '@images/customizer-icons/rtl-light.svg'
-import wideSvg from '@images/customizer-icons/wide-light.svg'
 
-const isNavDrawerOpen = ref(false)
+defineExpose({ open })
 
-defineExpose({ isNavDrawerOpen })
+const isOpen = ref(false)
+
+const open = () => {
+  isOpen.value = true
+}
 
 const configStore = useConfigStore()
-
 const vuetifyTheme = useTheme()
 
 const primaryColors = [
-  {
-    main: staticPrimaryColor,
-    darken: staticPrimaryDarkenColor,
-  },
-  {
-    main: '#0D9394',
-    darken: '#0C8485',
-  },
-  {
-    main: '#FFB400',
-    darken: '#E6A200',
-  },
-  {
-    main: '#FF4C51',
-    darken: '#E64449',
-  },
-  {
-    main: '#16B1FF',
-    darken: '#149FE6',
-  },
-  {
-    main: '#7367F0',
-    darken: '#675DD8',
-  },
+  { main: staticPrimaryColor, darken: staticPrimaryDarkenColor },
+  { main: '#0D9394', darken: '#0C8485' },
+  { main: '#FFB400', darken: '#E6A200' },
+  { main: '#FF4C51', darken: '#E64449' },
+  { main: '#16B1FF', darken: '#149FE6' },
+  { main: '#7367F0', darken: '#675DD8' },
 ]
 
 const lightBackgroundColors = [
@@ -91,15 +68,13 @@ watch(() => configStore.theme, () => {
     customPrimaryColor.value = cookiePrimaryColor
 }, { immediate: true })
 
-const setPrimaryColor = useDebounceFn(color => {
+const setPrimaryColor = color => {
   vuetifyTheme.themes.value[vuetifyTheme.name.value].colors.primary = color.main
   vuetifyTheme.themes.value[vuetifyTheme.name.value].colors['primary-darken-1'] = color.darken
-
   cookieRef(`${ vuetifyTheme.name.value }ThemePrimaryColor`, null).value = color.main
   cookieRef(`${ vuetifyTheme.name.value }ThemePrimaryDarkenColor`, null).value = color.darken
-
   useStorage(namespaceConfig('initial-loader-color'), null).value = color.main
-}, 100)
+}
 
 const setLightBackground = bg => {
   vuetifyTheme.themes.value.light.colors.background = bg.bg
@@ -118,56 +93,24 @@ const setDarkBackground = bg => {
 const currentLightBg = computed(() => lightBackgroundColors.find(c => c.bg === vuetifyTheme.themes.value.light.colors.background) || null)
 const currentDarkBg = computed(() => darkBackgroundColors.find(c => c.bg === vuetifyTheme.themes.value.dark.colors.background) || null)
 
-const themeMode = computed(() => [
-  {
-    bgImage: 'tabler-sun',
-    value: Theme.Light,
-    label: 'Light',
-  },
-  {
-    bgImage: 'tabler-moon-stars',
-    value: Theme.Dark,
-    label: 'Dark',
-  },
-  {
-    bgImage: 'tabler-device-desktop-analytics',
-    value: Theme.System,
-    label: 'System',
-  },
-])
+const themeMode = [
+  { bgImage: 'tabler-sun', value: Theme.Light, label: 'Light' },
+  { bgImage: 'tabler-moon-stars', value: Theme.Dark, label: 'Dark' },
+  { bgImage: 'tabler-device-desktop-analytics', value: Theme.System, label: 'System' },
+]
 
-const themeSkin = computed(() => [
-  {
-    bgImage: defaultSkin,
-    value: Skins.Default,
-    label: 'Default',
-  },
-  {
-    bgImage: borderSkin,
-    value: Skins.Bordered,
-    label: 'Bordered',
-  },
-])
+const themeSkin = [
+  { bgImage: 'default', value: Skins.Default, label: 'Default' },
+  { bgImage: 'bordered', value: Skins.Bordered, label: 'Bordered' },
+]
 
 const currentLayout = ref(configStore.isVerticalNavCollapsed ? 'collapsed' : configStore.appContentLayoutNav)
 
-const layouts = computed(() => [
-  {
-    bgImage: defaultSkin,
-    value: Layout.Vertical,
-    label: 'Vertical',
-  },
-  {
-    bgImage: collapsed,
-    value: Layout.Collapsed,
-    label: 'Collapsed',
-  },
-  {
-    bgImage: horizontalLight,
-    value: Layout.Horizontal,
-    label: 'Horizontal',
-  },
-])
+const layouts = [
+  { bgImage: 'vertical', value: Layout.Vertical, label: 'Vertical' },
+  { bgImage: 'collapsed', value: Layout.Collapsed, label: 'Collapsed' },
+  { bgImage: 'horizontal', value: Layout.Horizontal, label: 'Horizontal' },
+]
 
 watch(currentLayout, () => {
   if (currentLayout.value === 'collapsed') {
@@ -184,33 +127,17 @@ watch(() => configStore.isVerticalNavCollapsed, () => {
   currentLayout.value = configStore.isVerticalNavCollapsed ? 'collapsed' : configStore.appContentLayoutNav
 })
 
-const contentWidth = computed(() => [
-  {
-    bgImage: compact,
-    value: ContentWidth.Boxed,
-    label: 'Compact',
-  },
-  {
-    bgImage: wideSvg,
-    value: ContentWidth.Fluid,
-    label: 'Wide',
-  },
-])
+const contentWidth = [
+  { value: ContentWidth.Boxed, label: 'Compact' },
+  { value: ContentWidth.Fluid, label: 'Wide' },
+]
 
 const currentDir = ref(configStore.isAppRTL ? 'rtl' : 'ltr')
 
-const direction = computed(() => [
-  {
-    bgImage: ltrSvg,
-    value: Direction.Ltr,
-    label: 'Left to right',
-  },
-  {
-    bgImage: rtlSvg,
-    value: Direction.Rtl,
-    label: 'Right to left',
-  },
-])
+const direction = [
+  { value: Direction.Ltr, label: 'Left to right' },
+  { value: Direction.Rtl, label: 'Right to left' },
+]
 
 watch(currentDir, () => {
   if (currentDir.value === 'rtl')
@@ -295,109 +222,99 @@ const resetCustomizer = async () => {
 </script>
 
 <template>
-  <VNavigationDrawer
-    v-model="isNavDrawerOpen"
-    data-allow-mismatch
-    temporary
-    touchless
-    border="none"
+  <VDialog
+    v-model="isOpen"
     location="end"
-    width="400"
-    elevation="10"
-    :scrim="false"
-    class="app-customizer"
+    max-width="420"
+    scrollable
   >
-    <div class="customizer-heading d-flex align-center justify-space-between">
-      <div>
-        <h6 class="text-h6">
-          Theme Customizer
-        </h6>
-        <p class="text-body-2 mb-0">
-          Customize & Preview in Real Time
-        </p>
-      </div>
-
-      <div class="d-flex align-center gap-1">
-        <VBtn
-          icon
-          variant="text"
-          size="small"
-          color="medium-emphasis"
-          @click="resetCustomizer"
-        >
-          <VBadge
-            v-show="isCookieHasAnyValue"
-            dot
-            color="error"
-            offset-x="-29"
-            offset-y="-14"
-          />
-
-          <VIcon
-            size="24"
-            color="high-emphasis"
-            icon="tabler-refresh"
-          />
-        </VBtn>
-
-        <VBtn
-          icon
-          variant="text"
-          color="medium-emphasis"
-          size="small"
-          @click="isNavDrawerOpen = false"
-        >
-          <VIcon
-            icon="tabler-x"
-            color="high-emphasis"
-            size="24"
-          />
-        </VBtn>
-      </div>
-    </div>
-
-    <VDivider />
-
-    <PerfectScrollbar
-      tag="ul"
-      :options="{ wheelPropagation: false }"
-    >
-      <CustomizerSection
-        title="Theming"
-        :divider="false"
-      >
-        <div class="d-flex flex-column gap-2">
+    <VCard class="theme-customizer">
+      <div class="customizer-heading d-flex align-center justify-space-between">
+        <div>
           <h6 class="text-h6">
+            Theme Customizer
+          </h6>
+          <p class="text-body-2 mb-0">
+            Customize & Preview in Real Time
+          </p>
+        </div>
+
+        <div class="d-flex align-center gap-1">
+          <VBtn
+            icon
+            variant="text"
+            size="small"
+            color="medium-emphasis"
+            @click="resetCustomizer"
+          >
+            <VBadge
+              v-show="isCookieHasAnyValue"
+              dot
+              color="error"
+              offset-x="-29"
+              offset-y="-14"
+            />
+
+            <VIcon
+              size="24"
+              color="high-emphasis"
+              icon="tabler-refresh"
+            />
+          </VBtn>
+
+          <VBtn
+            icon
+            variant="text"
+            color="medium-emphasis"
+            size="small"
+            @click="isOpen = false"
+          >
+            <VIcon
+              icon="tabler-x"
+              color="high-emphasis"
+              size="24"
+            />
+          </VBtn>
+        </div>
+      </div>
+
+      <VDivider />
+
+      <PerfectScrollbar
+        tag="div"
+        :options="{ wheelPropagation: false }"
+        class="customizer-content"
+      >
+        <VCardText class="pa-4">
+          <h6 class="text-subtitle-1 font-weight-medium mb-3">
             Primary Color
           </h6>
-
-          <div class="d-flex flex-wrap gap-2">
+          <div class="d-flex flex-wrap gap-2 mb-4">
             <div
               v-for="color in primaryColors"
               :key="color.main"
-              class="primary-color-wrapper cursor-pointer rounded"
+              class="color-swatch cursor-pointer"
               :class="vuetifyTheme.current.value.colors.primary === color.main ? 'active' : ''"
-              :style="vuetifyTheme.current.value.colors.primary === color.main ? `outline-color: ${color.main}; outline-width:2px;` : ''"
+              :style="{ backgroundColor: color.main }"
               @click="setPrimaryColor(color)"
             >
-              <div
-                class="color-swatch"
-                :style="{ backgroundColor: color.main }"
+              <VIcon
+                v-if="vuetifyTheme.current.value.colors.primary === color.main"
+                icon="tabler-check"
+                size="16"
+                class="text-white"
               />
             </div>
           </div>
-        </div>
 
-        <div class="d-flex flex-column gap-2 mt-4">
-          <h6 class="text-h6">
+          <h6 class="text-subtitle-1 font-weight-medium mb-3">
             Light Background
           </h6>
-
-          <div class="d-flex flex-wrap gap-2">
+          <div class="d-flex flex-wrap gap-2 mb-4">
             <div
               v-for="bg in lightBackgroundColors"
               :key="bg.bg"
-              class="bg-swatch cursor-pointer rounded"
+              class="bg-swatch cursor-pointer"
               :class="currentLightBg?.bg === bg.bg ? 'active' : ''"
               :style="{ backgroundColor: bg.bg }"
               @click="setLightBackground(bg)"
@@ -406,21 +323,19 @@ const resetCustomizer = async () => {
                 v-if="currentLightBg?.bg === bg.bg"
                 icon="tabler-check"
                 size="16"
+                class="text-white"
               />
             </div>
           </div>
-        </div>
 
-        <div class="d-flex flex-column gap-2 mt-4">
-          <h6 class="text-h6">
+          <h6 class="text-subtitle-1 font-weight-medium mb-3">
             Dark Background
           </h6>
-
-          <div class="d-flex flex-wrap gap-2">
+          <div class="d-flex flex-wrap gap-2 mb-4">
             <div
               v-for="bg in darkBackgroundColors"
               :key="bg.bg"
-              class="bg-swatch cursor-pointer rounded"
+              class="bg-swatch cursor-pointer"
               :class="currentDarkBg?.bg === bg.bg ? 'active' : ''"
               :style="{ backgroundColor: bg.bg }"
               @click="setDarkBackground(bg)"
@@ -429,184 +344,177 @@ const resetCustomizer = async () => {
                 v-if="currentDarkBg?.bg === bg.bg"
                 icon="tabler-check"
                 size="16"
+                class="text-white"
               />
             </div>
           </div>
-        </div>
 
-        <div class="d-flex flex-column gap-2 mt-4">
-          <h6 class="text-h6">
+          <h6 class="text-subtitle-1 font-weight-medium mb-3">
             Theme
           </h6>
-
-          <CustomRadiosWithImage
-            :key="configStore.theme"
-            v-model:selected-radio="configStore.theme"
-            :radio-content="themeMode"
-            :grid-column="{ cols: '4' }"
-            class="customizer-skins"
+          <VBtnToggle
+            v-model="configStore.theme"
+            mandatory
+            density="compact"
+            class="mb-4"
           >
-            <template #label="item">
-              <span class="text-sm text-medium-emphasis mt-1">{{ item?.label }}</span>
-            </template>
+            <VBtn
+              v-for="option in themeMode"
+              :key="option.value"
+              :value="option.value"
+              size="small"
+            >
+              <VIcon
+                :icon="option.bgImage"
+                size="18"
+              />
+              <span class="ms-1">{{ option.label }}</span>
+            </VBtn>
+          </VBtnToggle>
 
-            <template #content="{ item }">
-              <div
-                class="customizer-skins-icon-wrapper d-flex align-center justify-center py-3 w-100"
-                style="min-inline-size: 100%;"
-              >
-                <VIcon
-                  size="30"
-                  :icon="item.bgImage"
-                  color="high-emphasis"
-                />
-              </div>
-            </template>
-          </CustomRadiosWithImage>
-        </div>
-
-        <div class="d-flex flex-column gap-2 mt-4">
-          <h6 class="text-h6">
+          <h6 class="text-subtitle-1 font-weight-medium mb-3">
             Skins
           </h6>
-
-          <CustomRadiosWithImage
-            :key="configStore.skin"
-            v-model:selected-radio="configStore.skin"
-            :radio-content="themeSkin"
-            :grid-column="{ cols: '4' }"
+          <VBtnToggle
+            v-model="configStore.skin"
+            mandatory
+            density="compact"
+            class="mb-4"
           >
-            <template #label="item">
-              <span class="text-sm text-medium-emphasis">{{ item?.label }}</span>
-            </template>
-          </CustomRadiosWithImage>
-        </div>
+            <VBtn
+              v-for="option in themeSkin"
+              :key="option.value"
+              :value="option.value"
+              size="small"
+            >
+              {{ option.label }}
+            </VBtn>
+          </VBtnToggle>
 
-        <div
-          class="align-center justify-space-between mt-4"
-          :class="vuetifyTheme.global.name.value === 'light' && configStore.appContentLayoutNav === AppContentLayoutNav.Vertical ? 'd-flex' : 'd-none'"
-        >
-          <VLabel
-            for="customizer-semi-dark"
-            class="text-h6 text-high-emphasis"
+          <div
+            v-if="vuetifyTheme.global.name.value === 'light' && configStore.appContentLayoutNav === AppContentLayoutNav.Vertical"
+            class="d-flex align-center justify-space-between mb-4"
           >
-            Semi Dark Menu
-          </VLabel>
-
-          <div>
+            <span class="text-subtitle-1 font-weight-medium">
+              Semi Dark Menu
+            </span>
             <VSwitch
-              id="customizer-semi-dark"
               v-model="configStore.isVerticalNavSemiDark"
               class="ms-2"
+              hide-details
             />
           </div>
-        </div>
-      </CustomizerSection>
 
-      <CustomizerSection title="Layout">
-        <div class="d-flex flex-column gap-2">
-          <h6 class="text-base font-weight-medium">
+          <h6 class="text-subtitle-1 font-weight-medium mb-3">
             Layout
           </h6>
-
-          <CustomRadiosWithImage
-            :key="currentLayout"
-            v-model:selected-radio="currentLayout"
-            :radio-content="layouts"
-            :grid-column="{ cols: '4' }"
+          <VBtnToggle
+            v-model="currentLayout"
+            density="compact"
+            class="mb-4"
           >
-            <template #label="item">
-              <span class="text-sm text-medium-emphasis">{{ item.label }}</span>
-            </template>
-          </CustomRadiosWithImage>
-        </div>
+            <VBtn
+              v-for="option in layouts"
+              :key="option.value"
+              :value="option.value"
+              size="small"
+            >
+              {{ option.label }}
+            </VBtn>
+          </VBtnToggle>
 
-        <div class="d-flex flex-column gap-2 mt-4">
-          <h6 class="text-base font-weight-medium">
+          <h6 class="text-subtitle-1 font-weight-medium mb-3">
             Content
           </h6>
-
-          <CustomRadiosWithImage
-            :key="configStore.appContentWidth"
-            v-model:selected-radio="configStore.appContentWidth"
-            :radio-content="contentWidth"
-            :grid-column="{ cols: '4' }"
+          <VBtnToggle
+            v-model="configStore.appContentWidth"
+            density="compact"
+            class="mb-4"
           >
-            <template #label="item">
-              <span class="text-sm text-medium-emphasis">{{ item.label }}</span>
-            </template>
-          </CustomRadiosWithImage>
-        </div>
+            <VBtn
+              v-for="option in contentWidth"
+              :key="option.value"
+              :value="option.value"
+              size="small"
+            >
+              {{ option.label }}
+            </VBtn>
+          </VBtnToggle>
 
-        <div class="d-flex flex-column gap-2 mt-4">
-          <h6 class="text-base font-weight-medium">
+          <h6 class="text-subtitle-1 font-weight-medium mb-3">
             Direction
           </h6>
-
-          <CustomRadiosWithImage
-            :key="currentDir"
-            v-model:selected-radio="currentDir"
-            :radio-content="direction"
-            :grid-column="{ cols: '4' }"
+          <VBtnToggle
+            v-model="currentDir"
+            density="compact"
           >
-            <template #label="item">
-              <span class="text-sm text-medium-emphasis">{{ item?.label }}</span>
-            </template>
-          </CustomRadiosWithImage>
-        </div>
-      </CustomizerSection>
-    </PerfectScrollbar>
-  </VNavigationDrawer>
+            <VBtn
+              v-for="option in direction"
+              :key="option.value"
+              :value="option.value"
+              size="small"
+            >
+              {{ option.label }}
+            </VBtn>
+          </VBtnToggle>
+        </VCardText>
+      </PerfectScrollbar>
+    </VCard>
+  </VDialog>
 </template>
 
 <style lang="scss" scoped>
-.app-customizer {
-  &:not(.v-navigation-drawer--active) {
-    visibility: hidden;
-    pointer-events: none;
-  }
+.theme-customizer {
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .customizer-heading {
-  padding-block: 1rem;
-  padding-inline: 1.5rem;
+  padding: 1rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.customizer-content {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .color-swatch {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-}
-
-.bg-swatch {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  transition: transform 0.2s;
-  
+  transition: all 0.2s;
+  border: 2px solid transparent;
+
   &:hover {
     transform: scale(1.1);
   }
-  
+
   &.active {
-    outline: 2px solid rgb(var(--v-theme-primary));
-    outline-offset: 2px;
+    border-color: rgb(var(--v-theme-on-surface));
   }
 }
 
-.primary-color-wrapper {
-  padding: 4px;
-  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 6px;
-  
+.bg-swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  border: 2px solid rgba(var(--v-border-color), var(--v-border-opacity));
+
   &:hover {
-    border-color: rgba(var(--v-border-color), 0.22);
+    transform: scale(1.1);
   }
-  
+
   &.active {
+    border-color: rgb(var(--v-theme-primary));
     outline: 2px solid rgb(var(--v-theme-primary));
     outline-offset: 2px;
   }
