@@ -8,7 +8,7 @@ import NavBarNotifications from '@/layouts/components/NavBarNotifications.vue'
 import NavSearchBar from '@/layouts/components/NavSearchBar.vue'
 import NavbarShortcuts from '@/layouts/components/NavbarShortcuts.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
-import NavbarThemeCustomizer from '@/layouts/components/NavbarThemeCustomizer.vue'
+import NavbarCustomizerToggle from '@/layouts/components/NavbarCustomizerToggle.vue'
 import UserProfile from '@/layouts/components/UserProfile.vue'
 import NavBarI18n from '@core/components/I18n.vue'
 
@@ -41,7 +41,7 @@ import { VerticalNavLayout } from '@layouts'
           :languages="themeConfig.app.i18n.langConfig"
         />
         <NavbarThemeSwitcher />
-        <NavbarThemeCustomizer />
+        <NavbarCustomizerToggle />
         <NavbarShortcuts />
         <NavBarNotifications class="me-1" />
         <UserProfile />
@@ -55,8 +55,5 @@ import { VerticalNavLayout } from '@layouts'
     <template #footer>
       <Footer />
     </template>
-
-    <!-- 👉 Customizer -->
-    <TheCustomizer />
   </VerticalNavLayout>
 </template>
