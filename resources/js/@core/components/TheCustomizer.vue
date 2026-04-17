@@ -30,9 +30,10 @@ import ltrSvg from '@images/customizer-icons/ltr-light.svg'
 import rtlSvg from '@images/customizer-icons/rtl-light.svg'
 import wideSvg from '@images/customizer-icons/wide-light.svg'
 
+const isNavDrawerOpen = ref(false)
+
 defineExpose({ isNavDrawerOpen })
 
-const isNavDrawerOpen = ref(false)
 const configStore = useConfigStore()
 
 const vuetifyTheme = useTheme()
