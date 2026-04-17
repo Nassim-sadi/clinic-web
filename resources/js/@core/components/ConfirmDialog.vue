@@ -25,41 +25,45 @@ const confirm = () => {
 <template>
   <VDialog
     :model-value="modelValue"
-    max-width="400"
+    max-width="450"
     persistent
     @click:outside="close"
   >
-    <VCard>
-      <VCardText class="text-center pa-6">
+    <VCard class="confirm-dialog-card">
+      <VCardText class="text-center pa-8">
         <VAvatar
-          size="72"
-          color="error"
+          size="80"
+          :color="confirmColor"
           variant="tonal"
-          class="mb-4"
+          class="mb-5"
         >
           <VIcon
-            size="36"
+            size="40"
             :icon="icon"
           />
         </VAvatar>
 
-        <h5 class="text-h5 mb-2">
+        <h4 class="text-h4 font-weight-bold mb-3">
           {{ title }}
-        </h5>
+        </h4>
 
-        <p class="text-body-1 text-medium-emphasis mb-6">
+        <p class="text-body-1 text-medium-emphasis mb-6 px-2">
           {{ message }}
         </p>
 
-        <div class="d-flex justify-center gap-3">
+        <div class="d-flex justify-center gap-4 pt-2">
           <VBtn
             variant="outlined"
+            size="large"
+            class="px-6"
             @click="close"
           >
             {{ cancelText }}
           </VBtn>
           <VBtn
             :color="confirmColor"
+            size="large"
+            class="px-6"
             @click="confirm"
           >
             {{ confirmText }}
@@ -69,3 +73,9 @@ const confirm = () => {
     </VCard>
   </VDialog>
 </template>
+
+<style scoped>
+.confirm-dialog-card {
+  border-radius: 16px;
+}
+</style>
