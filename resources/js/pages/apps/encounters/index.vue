@@ -1,5 +1,6 @@
 <script setup>
 import { encounters } from '@/services/api'
+import EncounterModal from './EncounterModal.vue'
 
 definePage({
   meta: { title: 'Encounters' },
@@ -8,14 +9,15 @@ definePage({
 const search = ref('')
 const encountersList = ref([])
 const loading = ref(false)
+const showModal = ref(false)
+const selectedEncounter = ref(null)
 
 const headers = [
   { title: 'Patient', key: 'patient.name' },
   { title: 'Doctor', key: 'doctor.name' },
-  { title: 'Appointment', key: 'appointment_id' },
   { title: 'Chief Complaint', key: 'chief_complaint' },
   { title: 'Status', key: 'status' },
-  { title: 'Date', key: 'created_at' },
+  { title: 'Date', key: 'encounter_date' },
   { title: 'Actions', key: 'actions', sortable: false },
 ]
 
@@ -36,14 +38,44 @@ const fetchEncounters = async () => {
 
 const getStatusColor = status => {
   const colors = {
-    open: 'info',
-    in_progress: 'warning',
+    pending: 'warning',
+    in_progress: 'info',
     completed: 'success',
     cancelled: 'error',
   }
 
-  
   return colors[status] || 'grey'
+}
+
+const openAddModal = () => {
+  selectedEncounter.value = null
+  showModal.value = true
+}
+
+const openEditModal = encounter => {
+  selectedEncounter.value = encounter
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+  selectedEncounter.value = null
+}
+
+const handleSaved = () => {
+  fetchEncounters()
+}
+
+const deleteEncounter = async encounter => {
+  if (!confirm(`Delete this encounter?`))
+    return
+  try {
+    await encounters.delete(encounter.id)
+    fetchEncounters()
+  }
+  catch (error) {
+    console.error('Failed to delete encounter:', error)
+  }
 }
 
 watch(search, fetchEncounters, { debounce: 300 })
@@ -64,6 +96,22 @@ onMounted(fetchEncounters)
             prepend-inner-icon="tabler-search"
             density="compact"
           />
+        </VCol>
+        <VCol
+          cols="12"
+          md="6"
+          class="text-right"
+        >
+          <VBtn
+            color="primary"
+            @click="openAddModal"
+          >
+            <VIcon
+              icon="tabler-plus"
+              class="me-2"
+            />
+            Add Encounter
+          </VBtn>
         </VCol>
       </VRow>
     </VCardText>
@@ -86,7 +134,6 @@ onMounted(fetchEncounters)
         >
           <td>{{ encounter.patient?.name || 'N/A' }}</td>
           <td>{{ encounter.doctor?.name || 'N/A' }}</td>
-          <td>{{ encounter.appointment_id || 'N/A' }}</td>
           <td>{{ encounter.chief_complaint || 'N/A' }}</td>
           <td>
             <VChip
@@ -96,20 +143,19 @@ onMounted(fetchEncounters)
               {{ encounter.status }}
             </VChip>
           </td>
-          <td>{{ encounter.created_at }}</td>
+          <td>{{ encounter.encounter_date }}</td>
           <td>
-            <VBtn
-              icon
-              variant="text"
-              size="small"
-            >
-              <VIcon icon="tabler-eye" />
-            </VBtn>
+            <IconBtn @click="openEditModal(encounter)">
+              <VIcon icon="tabler-edit" />
+            </IconBtn>
+            <IconBtn @click="deleteEncounter(encounter)">
+              <VIcon icon="tabler-trash" />
+            </IconBtn>
           </td>
         </tr>
         <tr v-if="encountersList.length === 0 && !loading">
           <td
-            colspan="7"
+            colspan="6"
             class="text-center text-disabled pa-4"
           >
             No encounters found
@@ -118,4 +164,19 @@ onMounted(fetchEncounters)
       </tbody>
     </VTable>
   </VCard>
+
+  <EncounterModal
+    v-if="showModal"
+    :encounter="selectedEncounter"
+    @saved="handleSaved"
+    @closed="closeModal"
+  />
+
+  <VOverlay
+    v-model="loading"
+    contained
+    class="align-center justify-center"
+  >
+    <VProgressCircular indeterminate />
+  </VOverlay>
 </template>
