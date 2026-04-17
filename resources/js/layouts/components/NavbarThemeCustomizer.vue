@@ -6,8 +6,6 @@ import { useConfigStore } from '@core/stores/config'
 const configStore = useConfigStore()
 const vuetifyTheme = useTheme()
 
-const showCustomizer = ref(false)
-
 const lightColors = [
   { name: 'Green', main: '#52F021', darken: '#48D81D' },
   { name: 'Teal', main: '#0D9394', darken: '#0C8485' },
@@ -51,20 +49,14 @@ const themeOptions = [
 </script>
 
 <template>
-  <div>
-    <IconBtn
-      id="theme-customizer-btn"
-      @click="showCustomizer = !showCustomizer"
-    >
-      <VIcon icon="tabler-palette" />
+  <IconBtn id="theme-customizer-btn">
+    <VIcon icon="tabler-palette" />
 
-      <VTooltip activator="parent">
-        Theme Settings
-      </VTooltip>
-    </IconBtn>
+    <VTooltip activator="parent">
+      Theme Settings
+    </VTooltip>
 
     <VMenu
-      v-model="showCustomizer"
       activator="#theme-customizer-btn"
       location="bottom end"
       :offset="12"
@@ -76,14 +68,6 @@ const themeOptions = [
             <h5 class="text-h5">
               Theme Settings
             </h5>
-            <VBtn
-              icon
-              variant="text"
-              size="small"
-              @click="showCustomizer = false"
-            >
-              <VIcon icon="tabler-x" />
-            </VBtn>
           </div>
 
           <VRow dense>
@@ -161,7 +145,7 @@ const themeOptions = [
         </VCardText>
       </VCard>
     </VMenu>
-  </div>
+  </IconBtn>
 </template>
 
 <style scoped>
