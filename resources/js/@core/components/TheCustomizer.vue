@@ -22,13 +22,13 @@ import {
 } from '@layouts/stores/config'
 import { themeConfig } from '@themeConfig'
 
-defineExpose({ open })
-
 const isOpen = ref(false)
 
 const open = () => {
   isOpen.value = true
 }
+
+defineExpose({ open })
 
 const configStore = useConfigStore()
 const vuetifyTheme = useTheme()
