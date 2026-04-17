@@ -1,12 +1,12 @@
-export const staticPrimaryColor = '#7367F0'
-export const staticPrimaryDarkenColor = '#675DD8'
+export const staticPrimaryColor = '#52F021'
+export const staticPrimaryDarkenColor = '#48D81D'
 export const themes = {
   light: {
     dark: false,
     colors: {
       'primary': staticPrimaryColor,
-      'on-primary': '#fff',
-      'primary-darken-1': '#675DD8',
+      'on-primary': '#1A1A1A',
+      'primary-darken-1': '#48D81D',
       'secondary': '#808390',
       'on-secondary': '#fff',
       'secondary-darken-1': '#737682',
@@ -78,8 +78,8 @@ export const themes = {
     dark: true,
     colors: {
       'primary': staticPrimaryColor,
-      'on-primary': '#fff',
-      'primary-darken-1': '#675DD8',
+      'on-primary': '#1A1A1A',
+      'primary-darken-1': '#48D81D',
       'secondary': '#808390',
       'on-secondary': '#fff',
       'secondary-darken-1': '#737682',
@@ -95,13 +95,13 @@ export const themes = {
       'error': '#FF4C51',
       'on-error': '#fff',
       'error-darken-1': '#E64449',
-      'background': '#25293C',
+      'background': '#1A1A2E',
       'on-background': '#E1DEF5',
-      'surface': '#2F3349',
+      'surface': '#252640',
       'on-surface': '#E1DEF5',
-      'grey-50': '#26293A',
-      'grey-100': '#2F3349',
-      'grey-200': '#26293A',
+      'grey-50': '#1F1F35',
+      'grey-100': '#252640',
+      'grey-200': '#2A2A45',
       'grey-300': '#4A5072',
       'grey-400': '#5E6692',
       'grey-500': '#7983BB',
@@ -111,8 +111,8 @@ export const themes = {
       'grey-900': '#E7E9F6',
       'grey-light': '#353A52',
       'perfect-scrollbar-thumb': '#4A5072',
-      'skin-bordered-background': '#2F3349',
-      'skin-bordered-surface': '#2F3349',
+      'skin-bordered-background': '#252640',
+      'skin-bordered-surface': '#252640',
     },
     variables: {
       'code-color': '#d400ff',
@@ -128,7 +128,7 @@ export const themes = {
       'disabled-opacity': 0.4,
       'border-color': '#E1DEF5',
       'border-opacity': 0.12,
-      'table-header-color': '#535876',
+      'table-header-color': '#353A52',
       'high-emphasis-opacity': 0.9,
       'medium-emphasis-opacity': 0.7,
       'switch-opacity': 0.4,
