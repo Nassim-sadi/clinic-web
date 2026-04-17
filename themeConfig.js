@@ -11,7 +11,7 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     title: 'ClinicWeb',
     logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
     contentWidth: ContentWidth.Boxed,
-    contentLayoutNav: AppContentLayoutNav.Horizontal,
+    contentLayoutNav: AppContentLayoutNav.Vertical,
     overlayNavFromBreakpoint: breakpointsVuetifyV3.lg - 1,
     i18n: {
       enable: true,
