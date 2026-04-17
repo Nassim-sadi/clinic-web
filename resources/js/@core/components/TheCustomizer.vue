@@ -560,6 +560,13 @@ const resetCustomizer = async () => {
 </template>
 
 <style lang="scss" scoped>
+.app-customizer {
+  &:not(.v-navigation-drawer--active) {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 .customizer-heading {
   padding-block: 1rem;
   padding-inline: 1.5rem;
