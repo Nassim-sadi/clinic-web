@@ -22,7 +22,7 @@ export default [
   {
     title: 'Services',
     to: 'services',
-    icon: { icon: 'tabler-medical-services' },
+    icon: { icon: 'tabler-stethoscope' },
   },
   {
     title: 'Billing',

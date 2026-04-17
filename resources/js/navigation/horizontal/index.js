@@ -26,6 +26,11 @@ export default [
     icon: { icon: 'tabler-calendar' },
   },
   {
+    title: 'Services',
+    to: 'services',
+    icon: { icon: 'tabler-stethoscope' },
+  },
+  {
     title: 'Billing',
     icon: { icon: 'tabler-receipt' },
     children: [
@@ -37,9 +42,14 @@ export default [
       {
         title: 'Reports',
         to: 'reports',
-        icon: { icon: 'tabler-report' },
+        icon: { icon: 'tabler-chart-bar' },
       },
     ],
+  },
+  {
+    title: 'Prescriptions',
+    to: 'prescriptions',
+    icon: { icon: 'tabler-prescription' },
   },
   {
     title: 'Queue',
@@ -53,17 +63,12 @@ export default [
       {
         title: 'Account Settings',
         to: 'pages-account-settings',
-        icon: { icon: 'tabler-settings' },
+        icon: { icon: 'tabler-user' },
       },
       {
         title: 'User Management',
         to: 'users',
         icon: { icon: 'tabler-user-cog' },
-      },
-      {
-        title: 'Services',
-        to: 'services',
-        icon: { icon: 'tabler-medical-services' },
       },
     ],
   },
