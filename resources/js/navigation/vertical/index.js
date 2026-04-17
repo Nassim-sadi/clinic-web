@@ -1,8 +1,74 @@
-import appsAndPages from './apps-and-pages'
-import charts from './charts'
-import dashboard from './dashboard'
-import forms from './forms'
-import others from './others'
-import uiElements from './ui-elements'
-
-export default [...dashboard, ...appsAndPages, ...uiElements, ...forms, ...charts, ...others]
+export default [
+  {
+    title: 'Dashboard',
+    to: 'dashboard',
+    icon: { icon: 'tabler-smart-home' },
+  },
+  {
+    title: 'Patients',
+    to: 'patients',
+    icon: { icon: 'tabler-users' },
+  },
+  {
+    title: 'Doctors',
+    to: 'doctors',
+    icon: { icon: 'tabler-stethoscope' },
+  },
+  {
+    title: 'Appointments',
+    to: 'appointments',
+    icon: { icon: 'tabler-calendar' },
+  },
+  {
+    title: 'Services',
+    to: 'services',
+    icon: { icon: 'tabler-medical-services' },
+  },
+  {
+    title: 'Billing',
+    icon: { icon: 'tabler-receipt' },
+    children: [
+      {
+        title: 'Bills',
+        to: 'bills',
+        icon: { icon: 'tabler-file-invoice' },
+      },
+      {
+        title: 'Reports',
+        to: 'reports',
+        icon: { icon: 'tabler-chart-bar' },
+      },
+    ],
+  },
+  {
+    title: 'Prescriptions',
+    to: 'prescriptions',
+    icon: { icon: 'tabler-prescription' },
+  },
+  {
+    title: 'Encounters',
+    to: 'encounters',
+    icon: { icon: 'tabler-notes' },
+  },
+  {
+    title: 'Waiting Queue',
+    to: 'queue',
+    icon: { icon: 'tabler-users-group' },
+  },
+  {
+    title: 'Settings',
+    icon: { icon: 'tabler-settings' },
+    children: [
+      {
+        title: 'Account Settings',
+        to: 'pages-account-settings',
+        icon: { icon: 'tabler-user' },
+      },
+      {
+        title: 'User Management',
+        to: 'users',
+        icon: { icon: 'tabler-user-cog' },
+      },
+    ],
+  },
+]

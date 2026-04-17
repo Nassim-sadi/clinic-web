@@ -1,90 +1,86 @@
 <script setup>
-import avatar3 from '@images/avatars/avatar-3.png'
-import avatar4 from '@images/avatars/avatar-4.png'
-import avatar5 from '@images/avatars/avatar-5.png'
-import paypal from '@images/cards/paypal-rounded.png'
+import { useNotifications } from '@/composables/useNotifications'
 
-const notifications = ref([
-  {
-    id: 1,
-    img: avatar4,
-    title: 'Congratulation Flora! 🎉',
-    subtitle: 'Won the monthly best seller badge',
-    time: 'Today',
-    isSeen: true,
-  },
-  {
-    id: 2,
-    text: 'Tom Holland',
-    title: 'New user registered.',
-    subtitle: '5 hours ago',
-    time: 'Yesterday',
-    isSeen: false,
-  },
-  {
-    id: 3,
-    img: avatar5,
-    title: 'New message received 👋🏻',
-    subtitle: 'You have 10 unread messages',
-    time: '11 Aug',
-    isSeen: true,
-  },
-  {
-    id: 4,
-    img: paypal,
-    title: 'PayPal',
-    subtitle: 'Received Payment',
-    time: '25 May',
-    isSeen: false,
-    color: 'error',
-  },
-  {
-    id: 5,
-    img: avatar3,
-    title: 'Received Order 📦',
-    subtitle: 'New order received from john',
-    time: '19 Mar',
-    isSeen: true,
-  },
-])
+const { notifications, unreadCount, markAsRead, markAllAsRead, formatTime } = useNotifications()
 
-const removeNotification = notificationId => {
-  notifications.value.forEach((item, index) => {
-    if (notificationId === item.id)
-      notifications.value.splice(index, 1)
-  })
-}
-
-const markRead = notificationId => {
-  notifications.value.forEach(item => {
-    notificationId.forEach(id => {
-      if (id === item.id)
-        item.isSeen = true
-    })
-  })
-}
-
-const markUnRead = notificationId => {
-  notifications.value.forEach(item => {
-    notificationId.forEach(id => {
-      if (id === item.id)
-        item.isSeen = false
-    })
-  })
-}
-
-const handleNotificationClick = notification => {
-  if (!notification.isSeen)
-    markRead([notification.id])
-}
+const show = ref(false)
 </script>
 
 <template>
-  <Notifications
-    :notifications="notifications"
-    @remove="removeNotification"
-    @read="markRead"
-    @unread="markUnRead"
-    @click:notification="handleNotificationClick"
-  />
+  <VMenu
+    v-model="show"
+    :close-on-content-click="false"
+    offset="12px"
+    location="bottom end"
+    width="350"
+  >
+    <template #activator="{ props }">
+      <VBtn
+        v-bind="props"
+        icon
+        variant="text"
+      >
+        <VBadge
+          v-if="unreadCount > 0"
+          :content="unreadCount"
+          color="error"
+        >
+          <VIcon icon="tabler-bell" />
+        </VBadge>
+        <VIcon
+          v-else
+          icon="tabler-bell"
+        />
+      </VBtn>
+    </template>
+
+    <VCard>
+      <VCardText class="d-flex align-center justify-space-between pa-3">
+        <h5 class="text-body-1 font-weight-medium">
+          Notifications
+        </h5>
+        <VBtn
+          v-if="unreadCount > 0"
+          variant="text"
+          size="small"
+          @click="markAllAsRead"
+        >
+          Mark all read
+        </VBtn>
+      </VCardText>
+
+      <VDivider />
+
+      <VList
+        v-if="notifications.length"
+        density="compact"
+        class="py-0"
+      >
+        <template
+          v-for="notification in notifications"
+          :key="notification.id"
+        >
+          <VListItem
+            :class="{ 'bg-surface': !notification.read_at }"
+            @click="markAsRead(notification.id)"
+          >
+            <VListItemTitle class="text-body-2">
+              {{ notification.title || notification.data?.title || 'New notification' }}
+            </VListItemTitle>
+            <VListItemSubtitle class="text-caption">
+              {{ formatTime(notification.created_at) }}
+            </VListItemSubtitle>
+          </VListItem>
+          <VDivider />
+        </template>
+      </VList>
+
+      <VCardText
+        v-else
+        class="text-center text-disabled pa-4"
+      >
+        No notifications
+      </VCardText>
+    </VCard>
+  </VMenu>
 </template>

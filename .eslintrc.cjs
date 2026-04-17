@@ -24,7 +24,7 @@ module.exports = {
     'regex',
     'regexp',
   ],
-  ignorePatterns: ['resources/js/plugins/iconify/*.js', 'node_modules', 'dist', '*.d.ts', 'vendor', '*.json'],
+  ignorePatterns: ['resources/js/plugins/iconify/*.js', 'resources/js/plugins/_fake-api/**/*.js', 'node_modules', 'dist', '*.d.ts', 'vendor', '*.json'],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -50,8 +50,8 @@ module.exports = {
     // Enforce consistent spacing inside braces of object (Already present in TypeScript)
     'object-curly-spacing': ['error', 'always'],
 
-    // Enforce camelCase naming convention
-    'camelcase': 'error',
+    // Enforce camelCase naming convention (but allow snake_case for API/Laravel data)
+    'camelcase': ['warn', { properties: 'never', ignoreDestructuring: true }],
 
     // Disable max-len
     'max-len': 'off',
@@ -163,7 +163,7 @@ module.exports = {
     'vue/no-useless-v-bind': 'error',
     'vue/padding-line-between-blocks': 'error',
     'vue/prefer-separate-static-class': 'error',
-    'vue/prefer-true-attribute-shorthand': 'error',
+    'vue/prefer-true-attribute-shorthand': 'off',
     'vue/v-on-function-call': 'error',
     'vue/no-restricted-class': ['error', '/^(p|m)(l|r)-/'],
     'vue/valid-v-slot': ['error', {
@@ -177,6 +177,7 @@ module.exports = {
     // -- Sonarlint
     'sonarjs/no-duplicate-string': 'off',
     'sonarjs/no-nested-template-literals': 'off',
+    'sonarjs/no-useless-catch': 'off',
 
     // -- Unicorn
     // 'unicorn/filename-case': 'off',

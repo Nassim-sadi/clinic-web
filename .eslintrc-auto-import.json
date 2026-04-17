@@ -360,6 +360,8 @@
     "watchThrottled": true,
     "watchTriggerable": true,
     "watchWithFilter": true,
-    "whenever": true
+    "whenever": true,
+    "useNotifications": true,
+    "useToast": true
   }
 }

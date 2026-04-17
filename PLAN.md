@@ -1,192 +1,154 @@
-# NSclinic - Clinic & Patient Management System (EHR)
+# ClinicWeb - Clinic & Patient Management System (EHR)
 
 ## Project Overview
 
 Inspired by [KiviCare](https://kivicare.io) - A comprehensive Clinic & Patient Management System (EHR) with features for appointment scheduling, patient records, billing, prescriptions, and telemedicine.
 
 **Tech Stack:**
-- Backend: Laravel 13 (API)
-- Frontend: Vue 3 + Vuetify 3
-- Calendar: FullCalendar
-- Desktop: Wails (Go) ready
-- Validation: Vuelidate
-- Toast: Vuetify snackbar
-- Styling: **Vuexy Admin Template** (fully imported)
-- Auth: Laravel Sanctum (Cookie-based for web, Token-based for desktop)
+- Backend: Laravel 12 (API)
+- Frontend: Vue 3 + Vuexy Admin Template
+- Auth: Laravel Sanctum
+- PDF: DomPDF
+- Permissions: Spatie Permission
 
 ---
 
-## ✅ COMPLETED: Vuexy Integration
+## Current Status
 
-**Status: Vuexy template fully integrated**
+### ✅ Backend - COMPLETE
 
-### Completed Tasks:
-1. [x] Copy Vuexy @core (components, composables, stores, utils, SCSS)
-2. [x] Copy Vuexy @layouts plugin (VerticalNavLayout, HorizontalNavLayout)
-3. [x] Copy Vuexy layouts (default.vue, blank.vue, components)
-4. [x] Copy Vuexy navigation (vertical, horizontal)
-5. [x] Copy Vuexy dashboard widgets
-6. [x] Copy Vuexy styles and images
-7. [x] Create themeConfig.js for NSclinic
-8. [x] Add all necessary vite aliases (@core, @layouts, @styles, @configured-variables, @images, @themeConfig)
-9. [x] Install dependencies: pinia, vue3-apexcharts, vue3-perfect-scrollbar, @iconify/vue, @tabler/icons-vue, @floating-ui/dom, @casl/vue, @casl/ability
-10. [x] Create Vuexy-based AdminLayout (VuexyAdminLayout.vue)
-11. [x] Create NSclinic navigation (nsclinic.js)
-12. [x] Create NavbarNotifications and NavbarUserMenu components
-13. [x] Update app.js to initialize layouts plugin and config store
-14. [x] Update router to use VuexyAdminLayout
-15. [x] Fix stats ref access issues
-16. [x] Remove duplicate apexcharts registration
-17. [x] Fix useSkins import path
+**Models (18):**
+`Appointment`, `AuditLog`, `Bill`, `BillItem`, `Clinic`, `CustomField`, `DoctorProfile`, `DoctorSession`, `Encounter`, `EntityCustomFieldValue`, `MedicalHistory`, `Notification`, `Patient`, `Prescription`, `RecurringAppointment`, `Service`, `User`, `WaitingQueue`
 
-### Vuexy Layout Structure:
-```
-@layouts/
-├── components/
-│   ├── VerticalNavLayout.vue   (Main vertical nav wrapper)
-│   ├── VerticalNav.vue         (Navigation sidebar)
-│   ├── VerticalNavLink.vue     (Nav items)
-│   ├── VerticalNavGroup.vue    (Nav groups)
-│   └── ...
-├── stores/config.js           (Layout config store)
-├── config.js                   (Layout configuration)
-├── index.js                    (Plugin entry)
-└── styles/                     (Layout SCSS)
+**Controllers (22):**
+`Auth`, `Appointment`, `Bill`, `Clinic`, `CustomField`, `Dashboard`, `Doctor`, `Email`, `Encounter`, `GoogleCalendar`, `MedicalHistory`, `Notification`, `Patient`, `Prescription`, `RecurringAppointment`, `Reports`, `Service`, `Tier`, `TwoFactorAuth`, `User`, `WaitingQueue`, `AuditLog`
 
-admin/layouts/
-├── VuexyAdminLayout.vue        (NSclinic admin layout)
-└── components/
-    ├── NavbarNotifications.vue
-    └── NavbarUserMenu.vue
-```
+**Services (7):**
+`AppointmentService`, `EmailService`, `ExportService`, `GoogleCalendarService`, `NotificationService`, `PdfService`, `TwoFactorAuthService`
 
-### Dashboard Widgets (from Vuexy):
-- `AnalyticsSalesOverview.vue` - Sales/Appointment overview card
-- `AnalyticsEarningReportsWeeklyOverview.vue` - Weekly trends chart
-- `AnalyticsSupportTracker.vue` - Radial bar chart with stats
-- `AnalyticsTotalEarning.vue` - Total revenue card
-- `AnalyticsAverageDailySales.vue` - Sparkline card
-- `AnalyticsProjectTable.vue` - Data table
+**Observers (5):**
+`AppointmentObserver`, `BillObserver`, `EncounterObserver`, `PatientObserver`, `UserObserver`
+
+**Migrations:** 29 tables created
+**API Routes:** 129 endpoints registered
+
+### ✅ Frontend - IN PROGRESS
+
+**Completed:**
+- [x] Theme config updated for ClinicWeb
+- [x] API service (`services/api.js`) - Full CRUD for all entities
+- [x] Auth store (`stores/auth.js`) - Login, register, logout
+- [x] Composables: `useToast`, `useNotifications`
+- [x] Router guards for authentication & role-based access
+- [x] Login page connected to API
+- [x] Dashboard page connected to API
+- [x] Patients page (list view)
+- [x] Doctors page (list view)
+- [x] Appointments page (list view)
+- [x] Services page (list view)
+- [x] Billing page (list view)
+- [x] Prescriptions page (list view)
+- [x] Encounters page (list view)
+- [x] Waiting Queue page with actions
+- [x] Reports page
+
+**To Do:**
+- [ ] Patient create/edit forms
+- [ ] Doctor create/edit forms
+- [ ] Appointment create/edit forms
+- [ ] Better navigation sidebar
+- [ ] Patient portal pages
+- [ ] Notifications panel in navbar
+- [ ] User profile page
+- [ ] Settings page
+- [ ] PDF views for prescriptions/bills
 
 ---
 
-## Tier System (SaaS Ready)
-
-NSclinic supports **3 tiers** configurable via `.env`:
-
-```env
-APP_TIER=one_doctor    # Solo practitioner
-APP_TIER=clinic        # Single clinic, multiple doctors
-APP_TIER=multi_clinic  # Full SaaS
-```
-
-### Tier Comparison
-
-| Feature | One Doctor | Clinic | Multi-clinic |
-|---------|-----------|--------|--------------|
-| Single Doctor | ✅ | ✅ | ✅ |
-| Multiple Doctors | ❌ | ✅ | ✅ |
-| Multiple Staff | ❌ | ✅ | ✅ |
-| Encounters | ❌ | ✅ | ✅ |
-| Prescriptions | ❌ | ✅ | ✅ |
-| Billing | ❌ | ✅ | ✅ |
-| Multiple Clinics | ❌ | ❌ | ✅ |
-| Clinic Switcher | ❌ | ❌ | ✅ |
-| Reports | ❌ | ❌ | ✅ |
-
----
-
-## KiviCare Feature Comparison
+## Features
 
 ### Implemented ✅
-| Feature | Status | KiviCare Equivalent |
-|---------|--------|---------------------|
-| Multi-clinic support | ✅ | ✅ |
+| Feature | Backend | Frontend |
+|---------|---------|----------|
+| Multi-clinic support | ✅ | 🔄 |
 | Role-based access (RBAC) | ✅ | ✅ |
-| Appointments with overlap detection | ✅ | ✅ |
+| Appointments | ✅ | ✅ |
 | Doctor profiles & sessions | ✅ | ✅ |
 | Patient management | ✅ | ✅ |
 | Services management | ✅ | ✅ |
 | Dashboard with stats | ✅ | ✅ |
-| Vuelidate + Toast notifications | ✅ | ✅ |
-| SoftDeletes on records | ✅ | ✅ |
-| Carbon time handling | ✅ | ✅ |
 | Encounters (Visits) | ✅ | ✅ |
 | Prescriptions | ✅ | ✅ |
 | Billing/Invoicing | ✅ | ✅ |
-| Notifications system | ✅ | ✅ |
-| Theme Customizer | ✅ | Vuexy Customizer |
-| Skeleton loaders | ✅ | ✅ |
-| Vuexy UI (imported) | ✅ | Custom |
-| Medical History module | ✅ | ✅ |
-| **PDF Generation** | ✅ | Invoice & Prescription PDFs with DomPDF |
-| **Translations/i18n** | ✅ | English, Arabic, French with vue-i18n |
-| **Reports/Export** | ✅ | Summary, appointments, patients, billing reports with CSV export |
-| **Custom Fields** | ✅ | Dynamic form fields for patients, encounters, appointments |
-| **Email Notifications** | ✅ | Send prescriptions/reports via email |
-| **Google Calendar** | ✅ | Sync appointments with Google Calendar |
-| **Audit Logging** | ✅ | Track all changes to records |
-| **Patient Portal** | ✅ | Enhanced patient dashboard with prescriptions, billing, medical history |
-| **Excel Export** | ✅ | Export reports to Excel with formatting |
-| **Dashboard Widgets** | ✅ | Customizable dashboard with draggable widgets |
-| **Automated Reminders** | ✅ | Scheduled appointment reminders via email |
-
-### To Implement 📋
-| Feature | Priority | Notes |
-|---------|----------|-------|
-| ~~2FA Authentication~~ | ✅ DONE | Email-based two-factor authentication |
-| ~~Recurring Appointments~~ | ✅ DONE | For chronic patients / regular visits |
-| ~~Waiting Room Queue~~ | ✅ DONE | Queue management for walk-ins |
-| ~~Wails Desktop App~~ | ✅ DONE | Desktop application packaging |
-| **API Documentation** | LOW | Swagger/OpenAPI documentation |
-| ~~Unit Tests~~ | ✅ DONE | PHPUnit tests for controllers & services |
-| **Vuexy Integration** | HIGH | Import full Vuexy template |
+| Notifications system | ✅ | 🔄 |
+| Custom fields | ✅ | ❌ |
+| Medical History | ✅ | ❌ |
+| PDF Generation | ✅ | 🔄 |
+| Reports/Export | ✅ | ✅ |
+| Email Notifications | ✅ | ❌ |
+| Google Calendar | ✅ | ❌ |
+| Audit Logging | ✅ | ❌ |
+| Waiting Queue | ✅ | ✅ |
+| 2FA Authentication | ✅ | ❌ |
+| Recurring Appointments | ✅ | ❌ |
 
 ---
 
-## Authentication (Updated)
+## API Endpoints
 
-### Strategy:
-- **Web**: Cookie-based auth with Sanctum (`withCredentials: true`)
-- **Desktop**: Token-based auth (`VITE_APP_MODE=desktop`)
+Key endpoints:
+- `POST /api/auth/login` - Login
+- `POST /api/auth/register` - Register
+- `GET /api/dashboard/stats` - Dashboard statistics
+- `GET/POST /api/appointments` - Appointments CRUD
+- `GET/POST /api/patients` - Patients CRUD
+- `GET/POST /api/doctors` - Doctors CRUD
+- `GET/POST /api/services` - Services CRUD
+- `GET/POST /api/bills` - Billing CRUD
+- `GET/POST /api/prescriptions` - Prescriptions CRUD
+- `GET/POST /api/encounters` - Encounters CRUD
 
-### Implementation:
-- `resources/js/stores/auth.js` - Pinia auth store
-- `resources/js/services/api.js` - Axios with conditional auth
+View all routes:
+```bash
+php artisan route:list --path=api
+```
 
 ---
 
 ## Project Structure
 
 ```
-NSclinic/
-├── app/                      (Laravel Backend - unchanged)
-├── nsclinic-desktop/          (Desktop App - unchanged)
+clinic-web/
+├── app/
+│   ├── Http/Controllers/Api/    # API Controllers
+│   ├── Models/                  # Eloquent Models (18)
+│   ├── Services/                # Business Logic (7)
+│   ├── Observers/              # Model Observers (5)
+│   └── Providers/               # Service Providers
 ├── resources/js/
-│   ├── @core/                (Vuexy @core - NEW)
-│   │   ├── components/       (Cards, Tables, etc.)
-│   │   ├── composable/       (useTheme, etc.)
-│   │   ├── stores/           (Config store)
-│   │   └── utils/
-│   ├── @layouts/             (Vuexy layouts plugin - NEW)
-│   │   ├── VerticalNavLayout.vue
-│   │   ├── HorizontalNavLayout.vue
-│   │   └── index.js
-│   ├── layouts/              (Vuexy layouts - NEW)
-│   │   ├── default.vue
-│   │   ├── blank.vue
-│   │   └── components/       (Navbar, Footer, etc.)
-│   ├── navigation/           (Vuexy nav - NEW)
-│   │   ├── vertical/
-│   │   └── horizontal/
-│   ├── plugins/              (Merged)
-│   ├── admin/
-│   │   ├── components/
-│   │   ├── layouts/
-│   │   └── pages/
-│   └── services/
-└── routes/
-    └── api.php
+│   ├── @core/                   # Vuexy core components
+│   ├── @layouts/                # Vuexy layouts plugin
+│   ├── composables/              # Vue composables (useToast, useNotifications)
+│   ├── services/                 # API services (api.js)
+│   ├── stores/                  # Pinia stores (auth.js)
+│   ├── pages/
+│   │   ├── apps/                # Clinic app pages
+│   │   │   ├── patients/        # Patients module
+│   │   │   ├── doctors/         # Doctors module
+│   │   │   ├── appointments/    # Appointments module
+│   │   │   ├── services/         # Services module
+│   │   │   ├── bills/            # Billing module
+│   │   │   ├── prescriptions/   # Prescriptions module
+│   │   │   ├── encounters/       # Encounters module
+│   │   │   ├── queue/            # Waiting queue module
+│   │   │   └── reports/          # Reports module
+│   │   └── dashboards/          # Dashboard pages
+│   └── plugins/                  # Vue plugins & router
+├── routes/
+│   └── api.php                   # API routes (129 endpoints)
+└── database/
+    ├── migrations/               # 29 migrations
+    └── seeders/                 # Database seeders
 ```
 
 ---
@@ -194,30 +156,36 @@ NSclinic/
 ## Running the Project
 
 ```bash
-# Backend
-php artisan serve
+# Install dependencies
+composer install
+npm install
 
-# Frontend
-npm run dev
-npm run build
+# Setup environment
+cp .env.example .env
+php artisan key:generate
 
-# Database
+# Run migrations
 php artisan migrate
-php artisan db:seed
+php artisan db:seed --class=PermissionSeeder
+
+# Start development
+php artisan serve          # API on http://localhost:8000
+npm run dev               # Frontend on http://localhost:5173
+
+# Production build
+npm run build
 ```
 
 ### Test Credentials
 | Role | Email | Password |
 |------|-------|----------|
 | Super Admin | admin@nsclinic.com | password |
-| Patient | john@example.com | password |
 
 ---
 
 ## References
 - [Vuexy Admin Template](https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/)
 - [KiviCare](https://kivicare.io)
-- [FullCalendar](https://fullcalendar.io/)
-- [Vuetify 3](https://vuetifyjs.com/)
+- [Laravel 12](https://laravel.com/docs/12.x)
 - [Laravel Sanctum](https://laravel.com/docs/sanctum)
 - [Spatie Permission](https://spatie.be/docs/laravel-permission)

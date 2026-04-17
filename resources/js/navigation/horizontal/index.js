@@ -1,10 +1,70 @@
-import apps from './apps'
-import charts from './charts'
-import dashboard from './dashboard'
-import forms from './forms'
-import misc from './misc'
-import pages from './pages'
-import tables from './tables'
-import uiElements from './ui-elements'
-
-export default [...dashboard, ...apps, ...pages, ...uiElements, ...forms, ...tables, ...charts, ...misc]
+export default [
+  {
+    title: 'Dashboard',
+    icon: { icon: 'tabler-smart-home' },
+    children: [
+      {
+        title: 'Analytics',
+        to: 'dashboard',
+        icon: { icon: 'tabler-chart-pie' },
+      },
+    ],
+  },
+  {
+    title: 'Patients',
+    to: 'patients',
+    icon: { icon: 'tabler-users' },
+  },
+  {
+    title: 'Doctors',
+    to: 'doctors',
+    icon: { icon: 'tabler-stethoscope' },
+  },
+  {
+    title: 'Appointments',
+    to: 'appointments',
+    icon: { icon: 'tabler-calendar' },
+  },
+  {
+    title: 'Billing',
+    icon: { icon: 'tabler-receipt' },
+    children: [
+      {
+        title: 'Bills',
+        to: 'bills',
+        icon: { icon: 'tabler-file-invoice' },
+      },
+      {
+        title: 'Reports',
+        to: 'reports',
+        icon: { icon: 'tabler-report' },
+      },
+    ],
+  },
+  {
+    title: 'Queue',
+    to: 'queue',
+    icon: { icon: 'tabler-users-group' },
+  },
+  {
+    title: 'Settings',
+    icon: { icon: 'tabler-settings' },
+    children: [
+      {
+        title: 'Account Settings',
+        to: 'pages-account-settings',
+        icon: { icon: 'tabler-settings' },
+      },
+      {
+        title: 'User Management',
+        to: 'users',
+        icon: { icon: 'tabler-user-cog' },
+      },
+      {
+        title: 'Services',
+        to: 'services',
+        icon: { icon: 'tabler-medical-services' },
+      },
+    ],
+  },
+]

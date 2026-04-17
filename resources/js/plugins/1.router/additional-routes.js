@@ -1,22 +1,18 @@
-const emailRouteComponent = () => import('@/pages/apps/email/index.vue')
-
-// 👉 Redirects
 export const redirects = [
-  // ℹ️ We are redirecting to different pages based on role.
-  // NOTE: Role is just for UI purposes. ACL is based on abilities.
   {
     path: '/',
     name: 'index',
-    redirect: to => {
-      // TODO: Get type from backend
-      const userData = useCookie('userData')
-      const userRole = userData.value?.role
-      if (userRole === 'admin')
-        return { name: 'dashboards-crm' }
-      if (userRole === 'client')
-        return { name: 'access-control' }
-      
-      return { name: 'login', query: to.query }
+    redirect: () => {
+      const userData = useCookie('userData').value
+      const userRole = userData?.role
+      if (userRole === 'super_admin' || userRole === 'clinic_admin' || userRole === 'admin')
+        return { name: 'dashboard' }
+      if (userRole === 'doctor')
+        return { name: 'dashboard' }
+      if (userRole === 'patient')
+        return { name: 'dashboard' }
+
+      return { name: 'login' }
     },
   },
   {
@@ -30,42 +26,84 @@ export const redirects = [
     redirect: () => ({ name: 'pages-account-settings-tab', params: { tab: 'account' } }),
   },
 ]
-export const routes = [
-  // Email filter
-  {
-    path: '/apps/email/filter/:filter',
-    name: 'apps-email-filter',
-    component: emailRouteComponent,
-    meta: {
-      navActiveLink: 'apps-email',
-      layoutWrapperClasses: 'layout-content-height-fixed',
-    },
-  },
 
-  // Email label
+export const routes = [
   {
-    path: '/apps/email/label/:label',
-    name: 'apps-email-label',
-    component: emailRouteComponent,
-    meta: {
-      // contentClass: 'email-application',
-      navActiveLink: 'apps-email',
-      layoutWrapperClasses: 'layout-content-height-fixed',
-    },
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('@/pages/dashboards/analytics.vue'),
+    meta: { title: 'Dashboard', requiresAuth: true },
   },
   {
-    path: '/dashboards/logistics',
-    name: 'dashboards-logistics',
-    component: () => import('@/pages/apps/logistics/dashboard.vue'),
+    path: '/patients',
+    name: 'patients',
+    component: () => import('@/pages/apps/patients/index.vue'),
+    meta: { title: 'Patients', requiresAuth: true, roles: ['super_admin', 'clinic_admin', 'admin', 'doctor'] },
   },
   {
-    path: '/dashboards/academy',
-    name: 'dashboards-academy',
-    component: () => import('@/pages/apps/academy/dashboard.vue'),
+    path: '/doctors',
+    name: 'doctors',
+    component: () => import('@/pages/apps/doctors/index.vue'),
+    meta: { title: 'Doctors', requiresAuth: true, roles: ['super_admin', 'clinic_admin'] },
   },
   {
-    path: '/apps/ecommerce/dashboard',
-    name: 'apps-ecommerce-dashboard',
-    component: () => import('@/pages/dashboards/ecommerce.vue'),
+    path: '/appointments',
+    name: 'appointments',
+    component: () => import('@/pages/apps/appointments/index.vue'),
+    meta: { title: 'Appointments', requiresAuth: true, roles: ['super_admin', 'clinic_admin', 'admin', 'doctor', 'secretary'] },
+  },
+  {
+    path: '/appointments/:id',
+    name: 'appointment-view',
+    component: () => import('@/pages/apps/appointments/[id].vue'),
+    meta: { title: 'Appointment Details', requiresAuth: true },
+  },
+  {
+    path: '/services',
+    name: 'services',
+    component: () => import('@/pages/apps/services/index.vue'),
+    meta: { title: 'Services', requiresAuth: true, roles: ['super_admin', 'clinic_admin'] },
+  },
+  {
+    path: '/bills',
+    name: 'bills',
+    component: () => import('@/pages/apps/bills/index.vue'),
+    meta: { title: 'Billing', requiresAuth: true, roles: ['super_admin', 'clinic_admin'] },
+  },
+  {
+    path: '/prescriptions',
+    name: 'prescriptions',
+    component: () => import('@/pages/apps/prescriptions/index.vue'),
+    meta: { title: 'Prescriptions', requiresAuth: true, roles: ['super_admin', 'clinic_admin', 'doctor'] },
+  },
+  {
+    path: '/encounters',
+    name: 'encounters',
+    component: () => import('@/pages/apps/encounters/index.vue'),
+    meta: { title: 'Encounters', requiresAuth: true, roles: ['super_admin', 'clinic_admin', 'doctor'] },
+  },
+  {
+    path: '/queue',
+    name: 'queue',
+    component: () => import('@/pages/apps/queue/index.vue'),
+    meta: { title: 'Waiting Queue', requiresAuth: true, roles: ['super_admin', 'clinic_admin', 'doctor', 'secretary'] },
+  },
+  {
+    path: '/reports',
+    name: 'reports',
+    component: () => import('@/pages/apps/reports/index.vue'),
+    meta: { title: 'Reports', requiresAuth: true, roles: ['super_admin', 'clinic_admin'] },
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('@/views/pages/account-settings/AccountSettingsAccount.vue'),
+    meta: { title: 'Settings', requiresAuth: true },
+  },
+  {
+    path: '/users',
+    name: 'users',
+    component: () => import('@/pages/apps/users/index.vue'),
+    meta: { title: 'User Management', requiresAuth: true, roles: ['super_admin', 'clinic_admin'] },
   },
 ]
