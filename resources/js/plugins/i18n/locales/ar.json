@@ -200,6 +200,10 @@
       "nextPage": "الصفحة التالية",
       "lastPage": "آخر صفحة"
     },
+    "dataIterator": {
+      "loadingText": "جار التحميل...",
+      "noResultsText": "لم يتم العثور على نتائج"
+    },
     "pagination": {
       "ariaLabel": {
         "root": "جذر",

@@ -157,70 +157,46 @@ onMounted(() => {
       </VRow>
     </VCardText>
 
-    <VTable>
-      <thead>
-        <tr>
-          <th
-            v-for="header in headers"
-            :key="header.key"
-          >
-            {{ header.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="user in usersList"
-          :key="user.id"
+    <VDataTable
+      :headers="headers"
+      :items="usersList"
+      :loading="loading"
+    >
+      <template #item.roles.0.name="{ item }">
+        <VChip
+          size="small"
+          variant="tonal"
         >
-          <td>{{ user.name }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            <VChip
-              size="small"
-              variant="tonal"
-            >
-              {{ user.roles?.[0]?.name || 'No role' }}
-            </VChip>
-          </td>
-          <td>
-            <VChip
-              :color="getStatusColor(user.is_active)"
-              size="small"
-            >
-              {{ getStatusText(user.is_active) }}
-            </VChip>
-          </td>
-          <td>{{ user.created_at }}</td>
-          <td>
-            <IconBtn @click="openEditModal(user)">
-              <VIcon icon="tabler-edit" />
-            </IconBtn>
-            <IconBtn
-              :disabled="user.id === currentUserId"
-              @click="toggleStatus(user)"
-            >
-              <VIcon icon="tabler-power" />
-            </IconBtn>
-            <IconBtn
-              color="error"
-              :disabled="user.id === currentUserId"
-              @click="confirmDelete(user)"
-            >
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-          </td>
-        </tr>
-        <tr v-if="usersList.length === 0 && !loading">
-          <td
-            colspan="6"
-            class="text-center text-disabled pa-4"
-          >
-            No users found
-          </td>
-        </tr>
-      </tbody>
-    </VTable>
+          {{ item.roles?.[0]?.name || 'No role' }}
+        </VChip>
+      </template>
+      <template #item.is_active="{ item }">
+        <VChip
+          :color="getStatusColor(item.is_active)"
+          size="small"
+        >
+          {{ getStatusText(item.is_active) }}
+        </VChip>
+      </template>
+      <template #item.actions="{ item }">
+        <IconBtn @click="openEditModal(item)">
+          <VIcon icon="tabler-edit" />
+        </IconBtn>
+        <IconBtn
+          :disabled="item.id === currentUserId"
+          @click="toggleStatus(item)"
+        >
+          <VIcon icon="tabler-power" />
+        </IconBtn>
+        <IconBtn
+          color="error"
+          :disabled="item.id === currentUserId"
+          @click="confirmDelete(item)"
+        >
+          <VIcon icon="tabler-trash" />
+        </IconBtn>
+      </template>
+    </VDataTable>
   </VCard>
 
   <Teleport to="body">
@@ -240,12 +216,4 @@ onMounted(() => {
       @confirm="deleteUser"
     />
   </Teleport>
-
-  <VOverlay
-    v-model="loading"
-    contained
-    class="align-center justify-center"
-  >
-    <VProgressCircular indeterminate />
-  </VOverlay>
 </template>

@@ -207,4 +207,9 @@ export const notifications = {
   clearAll: () => api.delete('/notifications/clear-all'),
 }
 
+export const activityLogs = {
+  list: params => api.get('/activity-logs', { params }),
+  logNames: () => api.get('/activity-logs/log-names'),
+}
+
 export default api

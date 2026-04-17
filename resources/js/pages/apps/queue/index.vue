@@ -169,74 +169,59 @@ onMounted(fetchQueue)
             Queue List
           </h5>
 
-          <VTable>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Patient</th>
-                <th>Doctor</th>
-                <th>Service</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="(item, index) in queueList"
-                :key="item.id"
+          <VDataTable
+            :headers="[
+              { title: '#', key: 'index' },
+              { title: 'Patient', key: 'patient.name' },
+              { title: 'Doctor', key: 'doctor.name' },
+              { title: 'Service', key: 'service.name' },
+              { title: 'Status', key: 'status' },
+              { title: 'Actions', key: 'actions' },
+            ]"
+            :items="queueList"
+            :loading="loading"
+          >
+            <template #item.index="{ index }">
+              {{ index + 1 }}
+            </template>
+            <template #item.status="{ item }">
+              <VChip
+                :color="getStatusColor(item.status)"
+                size="small"
               >
-                <td>{{ index + 1 }}</td>
-                <td>{{ item.patient?.name || 'N/A' }}</td>
-                <td>{{ item.doctor?.name || 'N/A' }}</td>
-                <td>{{ item.service?.name || 'N/A' }}</td>
-                <td>
-                  <VChip
-                    :color="getStatusColor(item.status)"
-                    size="small"
-                  >
-                    {{ item.status }}
-                  </VChip>
-                </td>
-                <td>
-                  <VBtn
-                    v-if="item.status === 'waiting'"
-                    size="small"
-                    color="warning"
-                    variant="tonal"
-                    @click="callPatient(item.id)"
-                  >
-                    Call
-                  </VBtn>
-                  <VBtn
-                    v-if="item.status === 'called'"
-                    size="small"
-                    color="primary"
-                    variant="tonal"
-                    @click="startEncounter(item.id)"
-                  >
-                    Start
-                  </VBtn>
-                  <VBtn
-                    v-if="item.status === 'in_progress'"
-                    size="small"
-                    color="success"
-                    variant="tonal"
-                    @click="completePatient(item.id)"
-                  >
-                    Complete
-                  </VBtn>
-                </td>
-              </tr>
-              <tr v-if="queueList.length === 0">
-                <td
-                  colspan="6"
-                  class="text-center text-disabled pa-4"
-                >
-                  No patients in queue
-                </td>
-              </tr>
-            </tbody>
-          </VTable>
+                {{ item.status }}
+              </VChip>
+            </template>
+            <template #item.actions="{ item }">
+              <VBtn
+                v-if="item.status === 'waiting'"
+                size="small"
+                color="warning"
+                variant="tonal"
+                @click="callPatient(item.id)"
+              >
+                Call
+              </VBtn>
+              <VBtn
+                v-if="item.status === 'called'"
+                size="small"
+                color="primary"
+                variant="tonal"
+                @click="startEncounter(item.id)"
+              >
+                Start
+              </VBtn>
+              <VBtn
+                v-if="item.status === 'in_progress'"
+                size="small"
+                color="success"
+                variant="tonal"
+                @click="completePatient(item.id)"
+              >
+                Complete
+              </VBtn>
+            </template>
+          </VDataTable>
         </VCardText>
       </VCard>
     </VCol>

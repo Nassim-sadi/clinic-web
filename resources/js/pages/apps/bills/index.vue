@@ -135,56 +135,34 @@ onMounted(fetchBills)
       </VRow>
     </VCardText>
 
-    <VTable>
-      <thead>
-        <tr>
-          <th
-            v-for="header in headers"
-            :key="header.key"
-          >
-            {{ header.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="bill in billsList"
-          :key="bill.id"
+    <VDataTable
+      :headers="headers"
+      :items="billsList"
+      :loading="loading"
+    >
+      <template #item.total_amount="{ item }">
+        {{ formatCurrency(item.total_amount) }}
+      </template>
+      <template #item.status="{ item }">
+        <VChip
+          :color="getStatusColor(item.status)"
+          size="small"
         >
-          <td>{{ bill.invoice_number }}</td>
-          <td>{{ bill.patient?.name || 'N/A' }}</td>
-          <td>{{ formatCurrency(bill.total_amount) }}</td>
-          <td>
-            <VChip
-              :color="getStatusColor(bill.status)"
-              size="small"
-            >
-              {{ bill.status }}
-            </VChip>
-          </td>
-          <td>{{ bill.created_at }}</td>
-          <td>
-            <IconBtn @click="openEditModal(bill)">
-              <VIcon icon="tabler-edit" />
-            </IconBtn>
-            <IconBtn
-              color="error"
-              @click="confirmDelete(bill)"
-            >
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-          </td>
-        </tr>
-        <tr v-if="billsList.length === 0 && !loading">
-          <td
-            colspan="6"
-            class="text-center text-disabled pa-4"
-          >
-            No bills found
-          </td>
-        </tr>
-      </tbody>
-    </VTable>
+          {{ item.status }}
+        </VChip>
+      </template>
+      <template #item.actions="{ item }">
+        <IconBtn @click="openEditModal(item)">
+          <VIcon icon="tabler-edit" />
+        </IconBtn>
+        <IconBtn
+          color="error"
+          @click="confirmDelete(item)"
+        >
+          <VIcon icon="tabler-trash" />
+        </IconBtn>
+      </template>
+    </VDataTable>
   </VCard>
 
   <Teleport to="body">
@@ -204,12 +182,4 @@ onMounted(fetchBills)
       @confirm="deleteBill"
     />
   </Teleport>
-
-  <VOverlay
-    v-model="loading"
-    contained
-    class="align-center justify-center"
-  >
-    <VProgressCircular indeterminate />
-  </VOverlay>
 </template>

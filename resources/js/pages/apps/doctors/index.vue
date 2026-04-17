@@ -139,57 +139,35 @@ onMounted(fetchDoctors)
       </VRow>
     </VCardText>
 
-    <VTable>
-      <thead>
-        <tr>
-          <th
-            v-for="header in headers"
-            :key="header.key"
-          >
-            {{ header.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="doctor in doctorsList"
-          :key="doctor.id"
+    <VDataTable
+      :headers="headers"
+      :items="doctorsList"
+      :loading="loading"
+      :items-length="pagination.total"
+    >
+      <template #item.experience_years="{ item }">
+        {{ item.experience_years ? `${item.experience_years} years` : 'N/A' }}
+      </template>
+      <template #item.is_active="{ item }">
+        <VChip
+          :color="item.is_active ? 'success' : 'error'"
+          size="small"
         >
-          <td>{{ doctor.name }}</td>
-          <td>{{ doctor.email || 'N/A' }}</td>
-          <td>{{ doctor.phone || 'N/A' }}</td>
-          <td>{{ doctor.specialty || 'N/A' }}</td>
-          <td>{{ doctor.experience_years ? `${doctor.experience_years} years` : 'N/A' }}</td>
-          <td>
-            <VChip
-              :color="doctor.is_active ? 'success' : 'error'"
-              size="small"
-            >
-              {{ doctor.is_active ? 'Active' : 'Inactive' }}
-            </VChip>
-          </td>
-          <td>
-            <IconBtn @click="openEditModal(doctor)">
-              <VIcon icon="tabler-edit" />
-            </IconBtn>
-            <IconBtn
-              color="error"
-              @click="confirmDelete(doctor)"
-            >
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-          </td>
-        </tr>
-        <tr v-if="doctorsList.length === 0 && !loading">
-          <td
-            colspan="7"
-            class="text-center text-disabled pa-4"
-          >
-            No doctors found
-          </td>
-        </tr>
-      </tbody>
-    </VTable>
+          {{ item.is_active ? 'Active' : 'Inactive' }}
+        </VChip>
+      </template>
+      <template #item.actions="{ item }">
+        <IconBtn @click="openEditModal(item)">
+          <VIcon icon="tabler-edit" />
+        </IconBtn>
+        <IconBtn
+          color="error"
+          @click="confirmDelete(item)"
+        >
+          <VIcon icon="tabler-trash" />
+        </IconBtn>
+      </template>
+    </VDataTable>
 
     <VDivider />
 

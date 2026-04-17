@@ -214,6 +214,10 @@
       "nextPage": "Next Page",
       "lastPage": "Last Page"
     },
+    "dataIterator": {
+      "loadingText": "Loading...",
+      "noResultsText": "No results found"
+    },
     "pagination": {
       "ariaLabel": {
         "root": "root",

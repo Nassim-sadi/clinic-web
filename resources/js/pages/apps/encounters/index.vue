@@ -131,56 +131,31 @@ onMounted(fetchEncounters)
       </VRow>
     </VCardText>
 
-    <VTable>
-      <thead>
-        <tr>
-          <th
-            v-for="header in headers"
-            :key="header.key"
-          >
-            {{ header.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="encounter in encountersList"
-          :key="encounter.id"
+    <VDataTable
+      :headers="headers"
+      :items="encountersList"
+      :loading="loading"
+    >
+      <template #item.status="{ item }">
+        <VChip
+          :color="getStatusColor(item.status)"
+          size="small"
         >
-          <td>{{ encounter.patient?.name || 'N/A' }}</td>
-          <td>{{ encounter.doctor?.name || 'N/A' }}</td>
-          <td>{{ encounter.chief_complaint || 'N/A' }}</td>
-          <td>
-            <VChip
-              :color="getStatusColor(encounter.status)"
-              size="small"
-            >
-              {{ encounter.status }}
-            </VChip>
-          </td>
-          <td>{{ encounter.encounter_date }}</td>
-          <td>
-            <IconBtn @click="openEditModal(encounter)">
-              <VIcon icon="tabler-edit" />
-            </IconBtn>
-            <IconBtn
-              color="error"
-              @click="confirmDelete(encounter)"
-            >
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-          </td>
-        </tr>
-        <tr v-if="encountersList.length === 0 && !loading">
-          <td
-            colspan="6"
-            class="text-center text-disabled pa-4"
-          >
-            No encounters found
-          </td>
-        </tr>
-      </tbody>
-    </VTable>
+          {{ item.status }}
+        </VChip>
+      </template>
+      <template #item.actions="{ item }">
+        <IconBtn @click="openEditModal(item)">
+          <VIcon icon="tabler-edit" />
+        </IconBtn>
+        <IconBtn
+          color="error"
+          @click="confirmDelete(item)"
+        >
+          <VIcon icon="tabler-trash" />
+        </IconBtn>
+      </template>
+    </VDataTable>
   </VCard>
 
   <Teleport to="body">
@@ -200,12 +175,4 @@ onMounted(fetchEncounters)
       @confirm="deleteEncounter"
     />
   </Teleport>
-
-  <VOverlay
-    v-model="loading"
-    contained
-    class="align-center justify-center"
-  >
-    <VProgressCircular indeterminate />
-  </VOverlay>
 </template>

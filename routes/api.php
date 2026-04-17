@@ -36,6 +36,7 @@ Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/user', [AuthController::class, 'user']);
         Route::put('/profile', [AuthController::class, 'updateProfile']);
+        Route::put('/change-password', [AuthController::class, 'changePassword']);
 
         Route::get('/two-factor/status', [TwoFactorAuthController::class, 'status']);
         Route::post('/two-factor/setup', [TwoFactorAuthController::class, 'setup']);
@@ -133,6 +134,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/google-calendar/calendars', [GoogleCalendarController::class, 'listCalendars']);
     Route::post('/google-calendar/sync', [GoogleCalendarController::class, 'syncAppointment']);
     Route::post('/google-calendar/disconnect', [GoogleCalendarController::class, 'disconnect']);
+});
+
+Route::prefix('activity-logs')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [ActivityLogController::class, 'index']);
+    Route::get('/log-names', [ActivityLogController::class, 'logNames']);
 });
 
 Route::get('/routes', function () {

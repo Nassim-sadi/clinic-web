@@ -138,49 +138,24 @@ onMounted(fetchPatients)
       </VRow>
     </VCardText>
 
-    <VTable>
-      <thead>
-        <tr>
-          <th
-            v-for="header in headers"
-            :key="header.key"
-          >
-            {{ header.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="patient in patientsList"
-          :key="patient.id"
+    <VDataTable
+      :headers="headers"
+      :items="patientsList"
+      :loading="loading"
+      :items-length="pagination.total"
+    >
+      <template #item.actions="{ item }">
+        <IconBtn @click="openEditModal(item)">
+          <VIcon icon="tabler-edit" />
+        </IconBtn>
+        <IconBtn
+          color="error"
+          @click="confirmDelete(item)"
         >
-          <td>{{ patient.name }}</td>
-          <td>{{ patient.email || 'N/A' }}</td>
-          <td>{{ patient.phone || 'N/A' }}</td>
-          <td>{{ patient.gender || 'N/A' }}</td>
-          <td>{{ patient.date_of_birth || 'N/A' }}</td>
-          <td>
-            <IconBtn @click="openEditModal(patient)">
-              <VIcon icon="tabler-edit" />
-            </IconBtn>
-            <IconBtn
-              color="error"
-              @click="confirmDelete(patient)"
-            >
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-          </td>
-        </tr>
-        <tr v-if="patientsList.length === 0 && !loading">
-          <td
-            colspan="6"
-            class="text-center text-disabled pa-4"
-          >
-            No patients found
-          </td>
-        </tr>
-      </tbody>
-    </VTable>
+          <VIcon icon="tabler-trash" />
+        </IconBtn>
+      </template>
+    </VDataTable>
 
     <VDivider />
 

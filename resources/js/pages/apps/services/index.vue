@@ -121,75 +121,58 @@ onMounted(fetchServices)
       </VRow>
     </VCardText>
 
-    <VTable>
-      <thead>
-        <tr>
-          <th
-            v-for="header in headers"
-            :key="header.key"
+    <VDataTable
+      :headers="headers"
+      :items="servicesList"
+      :loading="loading"
+    >
+      <template #item.name="{ item }">
+        <div class="d-flex align-center">
+          <VAvatar
+            :color="item.color || 'primary'"
+            size="32"
+            class="me-2"
           >
-            {{ header.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="service in servicesList"
-          :key="service.id"
+            <VIcon
+              icon="tabler-briefcase"
+              size="18"
+            />
+          </VAvatar>
+          <div>
+            <span class="d-block font-weight-medium">{{ item.name }}</span>
+            <span
+              v-if="item.description"
+              class="text-caption text-disabled"
+            >{{ item.description.substring(0, 50) }}...</span>
+          </div>
+        </div>
+      </template>
+      <template #item.duration="{ item }">
+        {{ item.duration }} min
+      </template>
+      <template #item.price="{ item }">
+        ${{ item.price }}
+      </template>
+      <template #item.is_active="{ item }">
+        <VChip
+          :color="item.is_active ? 'success' : 'error'"
+          size="small"
         >
-          <td>
-            <div class="d-flex align-center">
-              <VAvatar
-                :color="service.color || 'primary'"
-                size="32"
-                class="me-2"
-              >
-                <VIcon
-                  icon="tabler-briefcase"
-                  size="18"
-                />
-              </VAvatar>
-              <div>
-                <span class="d-block font-weight-medium">{{ service.name }}</span>
-                <span
-                  v-if="service.description"
-                  class="text-caption text-disabled"
-                >{{ service.description.substring(0, 50) }}...</span>
-              </div>
-            </div>
-          </td>
-          <td>{{ service.duration }} min</td>
-          <td>${{ service.price }}</td>
-          <td>
-            <VChip
-              :color="service.is_active ? 'success' : 'error'"
-              size="small"
-            >
-              {{ service.is_active ? 'Active' : 'Inactive' }}
-            </VChip>
-          </td>
-          <td>
-            <IconBtn @click="openEditModal(service)">
-              <VIcon icon="tabler-edit" />
-            </IconBtn>
-            <IconBtn
-              color="error"
-              @click="confirmDelete(service)"
-            >
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-          </td>
-        </tr>
-        <tr v-if="servicesList.length === 0 && !loading">
-          <td
-            colspan="5"
-            class="text-center text-disabled pa-4"
-          >
-            No services found
-          </td>
-        </tr>
-      </tbody>
-    </VTable>
+          {{ item.is_active ? 'Active' : 'Inactive' }}
+        </VChip>
+      </template>
+      <template #item.actions="{ item }">
+        <IconBtn @click="openEditModal(item)">
+          <VIcon icon="tabler-edit" />
+        </IconBtn>
+        <IconBtn
+          color="error"
+          @click="confirmDelete(item)"
+        >
+          <VIcon icon="tabler-trash" />
+        </IconBtn>
+      </template>
+    </VDataTable>
   </VCard>
 
   <Teleport to="body">

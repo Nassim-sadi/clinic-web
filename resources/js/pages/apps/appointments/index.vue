@@ -152,56 +152,34 @@ onMounted(fetchAppointments)
       </VRow>
     </VCardText>
 
-    <VTable>
-      <thead>
-        <tr>
-          <th
-            v-for="header in headers"
-            :key="header.key"
-          >
-            {{ header.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="apt in appointmentsList"
-          :key="apt.id"
+    <VDataTable
+      :headers="headers"
+      :items="appointmentsList"
+      :loading="loading"
+      :items-length="pagination.total"
+    >
+      <template #item.time="{ item }">
+        {{ formatTime(item.start_time) }} - {{ formatTime(item.end_time) }}
+      </template>
+      <template #item.status="{ item }">
+        <VChip
+          :color="getStatusColor(item.status)"
+          size="small"
         >
-          <td>{{ apt.patient?.name || 'N/A' }}</td>
-          <td>{{ apt.doctor?.name || 'N/A' }}</td>
-          <td>{{ apt.service?.name || 'N/A' }}</td>
-          <td>{{ apt.date }}</td>
-          <td>{{ formatTime(apt.start_time) }} - {{ formatTime(apt.end_time) }}</td>
-          <td>
-            <VChip
-              :color="getStatusColor(apt.status)"
-              size="small"
-            >
-              {{ apt.status }}
-            </VChip>
-          </td>
-          <td>
-            <VBtn
-              icon
-              variant="text"
-              size="small"
-              @click="openEditModal(apt)"
-            >
-              <VIcon icon="tabler-edit" />
-            </VBtn>
-          </td>
-        </tr>
-        <tr v-if="appointmentsList.length === 0 && !loading">
-          <td
-            colspan="7"
-            class="text-center text-disabled pa-4"
-          >
-            No appointments found
-          </td>
-        </tr>
-      </tbody>
-    </VTable>
+          {{ item.status }}
+        </VChip>
+      </template>
+      <template #item.actions="{ item }">
+        <VBtn
+          icon
+          variant="text"
+          size="small"
+          @click="openEditModal(item)"
+        >
+          <VIcon icon="tabler-edit" />
+        </VBtn>
+      </template>
+    </VDataTable>
 
     <VDivider />
 

@@ -1,5 +1,5 @@
 <script setup>
-import { dashboard, appointments, patients } from '@/services/api'
+import { dashboard } from '@/services/api'
 import { useAuthStore } from '@/stores/auth'
 
 definePage({
@@ -85,25 +85,31 @@ const formatCurrency = value => {
       md="3"
       sm="6"
     >
-      <VCard>
+      <VCard :loading="loading">
         <VCardText class="d-flex align-center">
-          <VAvatar
-            color="primary"
-            variant="tonal"
-            :size="48"
-            class="me-4"
-          >
-            <VIcon
-              icon="tabler-calendar"
-              size="24"
-            />
-          </VAvatar>
-          <div>
-            <span class="text-body-2 text-disabled">Today's Appointments</span>
-            <h4 class="text-h4">
-              {{ stats.todayAppointments }}
-            </h4>
-          </div>
+          <VSkeletonLoader
+            v-if="loading"
+            type="list-item-avatar-two-line"
+          />
+          <template v-else>
+            <VAvatar
+              color="primary"
+              variant="tonal"
+              :size="48"
+              class="me-4"
+            >
+              <VIcon
+                icon="tabler-calendar"
+                size="24"
+              />
+            </VAvatar>
+            <div>
+              <span class="text-body-2 text-disabled">Today's Appointments</span>
+              <h4 class="text-h4">
+                {{ stats.todayAppointments }}
+              </h4>
+            </div>
+          </template>
         </VCardText>
       </VCard>
     </VCol>
@@ -113,25 +119,31 @@ const formatCurrency = value => {
       md="3"
       sm="6"
     >
-      <VCard>
+      <VCard :loading="loading">
         <VCardText class="d-flex align-center">
-          <VAvatar
-            color="success"
-            variant="tonal"
-            :size="48"
-            class="me-4"
-          >
-            <VIcon
-              icon="tabler-users"
-              size="24"
-            />
-          </VAvatar>
-          <div>
-            <span class="text-body-2 text-disabled">Total Patients</span>
-            <h4 class="text-h4">
-              {{ stats.totalPatients }}
-            </h4>
-          </div>
+          <VSkeletonLoader
+            v-if="loading"
+            type="list-item-avatar-two-line"
+          />
+          <template v-else>
+            <VAvatar
+              color="success"
+              variant="tonal"
+              :size="48"
+              class="me-4"
+            >
+              <VIcon
+                icon="tabler-users"
+                size="24"
+              />
+            </VAvatar>
+            <div>
+              <span class="text-body-2 text-disabled">Total Patients</span>
+              <h4 class="text-h4">
+                {{ stats.totalPatients }}
+              </h4>
+            </div>
+          </template>
         </VCardText>
       </VCard>
     </VCol>
@@ -141,25 +153,31 @@ const formatCurrency = value => {
       md="3"
       sm="6"
     >
-      <VCard>
+      <VCard :loading="loading">
         <VCardText class="d-flex align-center">
-          <VAvatar
-            color="warning"
-            variant="tonal"
-            :size="48"
-            class="me-4"
-          >
-            <VIcon
-              icon="tabler-receipt"
-              size="24"
-            />
-          </VAvatar>
-          <div>
-            <span class="text-body-2 text-disabled">Pending Bills</span>
-            <h4 class="text-h4">
-              {{ stats.pendingBills }}
-            </h4>
-          </div>
+          <VSkeletonLoader
+            v-if="loading"
+            type="list-item-avatar-two-line"
+          />
+          <template v-else>
+            <VAvatar
+              color="warning"
+              variant="tonal"
+              :size="48"
+              class="me-4"
+            >
+              <VIcon
+                icon="tabler-receipt"
+                size="24"
+              />
+            </VAvatar>
+            <div>
+              <span class="text-body-2 text-disabled">Pending Bills</span>
+              <h4 class="text-h4">
+                {{ stats.pendingBills }}
+              </h4>
+            </div>
+          </template>
         </VCardText>
       </VCard>
     </VCol>
@@ -169,25 +187,31 @@ const formatCurrency = value => {
       md="3"
       sm="6"
     >
-      <VCard>
+      <VCard :loading="loading">
         <VCardText class="d-flex align-center">
-          <VAvatar
-            color="info"
-            variant="tonal"
-            :size="48"
-            class="me-4"
-          >
-            <VIcon
-              icon="tabler-cash"
-              size="24"
-            />
-          </VAvatar>
-          <div>
-            <span class="text-body-2 text-disabled">Total Revenue</span>
-            <h4 class="text-h4">
-              {{ formatCurrency(stats.totalRevenue) }}
-            </h4>
-          </div>
+          <VSkeletonLoader
+            v-if="loading"
+            type="list-item-avatar-two-line"
+          />
+          <template v-else>
+            <VAvatar
+              color="info"
+              variant="tonal"
+              :size="48"
+              class="me-4"
+            >
+              <VIcon
+                icon="tabler-cash"
+                size="24"
+              />
+            </VAvatar>
+            <div>
+              <span class="text-body-2 text-disabled">Total Revenue</span>
+              <h4 class="text-h4">
+                {{ formatCurrency(stats.totalRevenue) }}
+              </h4>
+            </div>
+          </template>
         </VCardText>
       </VCard>
     </VCol>
@@ -208,44 +232,29 @@ const formatCurrency = value => {
           </VBtn>
         </VCardText>
 
-        <VTable>
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>Doctor</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="apt in recentAppointments"
-              :key="apt.id"
+        <VDataTable
+          :headers="[
+            { title: 'Patient', key: 'patient.name' },
+            { title: 'Doctor', key: 'doctor.name' },
+            { title: 'Date', key: 'date' },
+            { title: 'Time', key: 'time' },
+            { title: 'Status', key: 'status' },
+          ]"
+          :items="recentAppointments"
+          :loading="loading"
+        >
+          <template #item.time="{ item }">
+            {{ formatTime(item.start_time) }} - {{ formatTime(item.end_time) }}
+          </template>
+          <template #item.status="{ item }">
+            <VChip
+              :color="getStatusColor(item.status)"
+              size="small"
             >
-              <td>{{ apt.patient?.name || 'N/A' }}</td>
-              <td>{{ apt.doctor?.name || 'N/A' }}</td>
-              <td>{{ apt.date }}</td>
-              <td>{{ formatTime(apt.start_time) }} - {{ formatTime(apt.end_time) }}</td>
-              <td>
-                <VChip
-                  :color="getStatusColor(apt.status)"
-                  size="small"
-                >
-                  {{ apt.status }}
-                </VChip>
-              </td>
-            </tr>
-            <tr v-if="recentAppointments.length === 0">
-              <td
-                colspan="5"
-                class="text-center text-disabled"
-              >
-                No recent appointments
-              </td>
-            </tr>
-          </tbody>
-        </VTable>
+              {{ item.status }}
+            </VChip>
+          </template>
+        </VDataTable>
       </VCard>
     </VCol>
 
@@ -253,7 +262,7 @@ const formatCurrency = value => {
       cols="12"
       md="4"
     >
-      <VCard>
+      <VCard :loading="loading">
         <VCardText>
           <h5 class="mb-4">
             Quick Actions
@@ -299,7 +308,10 @@ const formatCurrency = value => {
         </VCardText>
       </VCard>
 
-      <VCard class="mt-4">
+      <VCard
+        :loading="loading"
+        class="mt-4"
+      >
         <VCardText>
           <h5 class="mb-4">
             Welcome, {{ authStore.currentUser?.name || 'User' }}

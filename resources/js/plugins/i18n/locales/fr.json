@@ -201,6 +201,10 @@
       "nextPage": "Page suivante",
       "lastPage": "Dernière page"
     },
+    "dataIterator": {
+      "loadingText": "Chargement...",
+      "noResultsText": "Aucun résultat trouvé"
+    },
     "pagination": {
       "ariaLabel": {
         "root": "racine",

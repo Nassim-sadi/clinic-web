@@ -65,6 +65,11 @@ const exportReport = async () => {
   <VRow>
     <VCol cols="12">
       <VCard>
+        <VProgressLinear
+          v-if="loading"
+          indeterminate
+          color="primary"
+        />
         <VCardText>
           <VRow>
             <VCol
@@ -76,6 +81,7 @@ const exportReport = async () => {
                 :items="reportTypes"
                 label="Report Type"
                 density="compact"
+                :disabled="loading"
               />
             </VCol>
             <VCol
@@ -87,6 +93,7 @@ const exportReport = async () => {
                 label="From Date"
                 type="date"
                 density="compact"
+                :disabled="loading"
               />
             </VCol>
             <VCol
@@ -98,6 +105,7 @@ const exportReport = async () => {
                 label="To Date"
                 type="date"
                 density="compact"
+                :disabled="loading"
               />
             </VCol>
             <VCol
@@ -130,6 +138,11 @@ const exportReport = async () => {
       cols="12"
     >
       <VCard>
+        <VProgressLinear
+          v-if="loading"
+          indeterminate
+          color="primary"
+        />
         <VCardText>
           <h5 class="mb-4">
             Report Summary

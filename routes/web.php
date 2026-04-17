@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('{any?}', function() {
+Route::get('/login', function () {
+    return view('application');
+})->name('login');
+
+Route::get('{any?}', function () {
     return view('application');
 })->where('any', '.*');

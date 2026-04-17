@@ -130,59 +130,34 @@ onMounted(fetchPrescriptions)
       </VRow>
     </VCardText>
 
-    <VTable>
-      <thead>
-        <tr>
-          <th
-            v-for="header in headers"
-            :key="header.key"
-          >
-            {{ header.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="prescription in prescriptionsList"
-          :key="prescription.id"
+    <VDataTable
+      :headers="headers"
+      :items="prescriptionsList"
+      :loading="loading"
+    >
+      <template #item.status="{ item }">
+        <VChip
+          :color="getStatusColor(item.status)"
+          size="small"
         >
-          <td>{{ prescription.patient?.name || 'N/A' }}</td>
-          <td>{{ prescription.doctor?.name || 'N/A' }}</td>
-          <td>{{ prescription.medicine || 'N/A' }}</td>
-          <td>
-            <VChip
-              :color="getStatusColor(prescription.status)"
-              size="small"
-            >
-              {{ prescription.status }}
-            </VChip>
-          </td>
-          <td>{{ prescription.created_at }}</td>
-          <td>
-            <IconBtn @click="openEditModal(prescription)">
-              <VIcon icon="tabler-edit" />
-            </IconBtn>
-            <IconBtn @click="prescriptions.download(prescription.id)">
-              <VIcon icon="tabler-download" />
-            </IconBtn>
-            <IconBtn
-              color="error"
-              @click="confirmDelete(prescription)"
-            >
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-          </td>
-        </tr>
-        <tr v-if="prescriptionsList.length === 0 && !loading">
-          <td
-            colspan="6"
-            class="text-center text-disabled pa-4"
-          >
-            No prescriptions found
-          </td>
-        </tr>
-      </tbody>
-    </VTable>
+          {{ item.status }}
+        </VChip>
+      </template>
+      <template #item.actions="{ item }">
+        <IconBtn @click="openEditModal(item)">
+          <VIcon icon="tabler-edit" />
+        </IconBtn>
+        <IconBtn @click="prescriptions.download(item.id)">
+          <VIcon icon="tabler-download" />
+        </IconBtn>
+        <IconBtn
+          color="error"
+          @click="confirmDelete(item)"
+        >
+          <VIcon icon="tabler-trash" />
+        </IconBtn>
+      </template>
+    </VDataTable>
   </VCard>
 
   <Teleport to="body">
@@ -202,12 +177,4 @@ onMounted(fetchPrescriptions)
       @confirm="deletePrescription"
     />
   </Teleport>
-
-  <VOverlay
-    v-model="loading"
-    contained
-    class="align-center justify-center"
-  >
-    <VProgressCircular indeterminate />
-  </VOverlay>
 </template>
