@@ -7,7 +7,7 @@ import Footer from '@/layouts/components/Footer.vue'
 import NavBarNotifications from '@/layouts/components/NavBarNotifications.vue'
 import NavSearchBar from '@/layouts/components/NavSearchBar.vue'
 import NavbarShortcuts from '@/layouts/components/NavbarShortcuts.vue'
-import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
+import NavbarThemeCustomizer from '@/layouts/components/NavbarThemeCustomizer.vue'
 import UserProfile from '@/layouts/components/UserProfile.vue'
 import NavBarI18n from '@core/components/I18n.vue'
 import { HorizontalNavLayout } from '@layouts'
@@ -37,7 +37,7 @@ import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
         :languages="themeConfig.app.i18n.langConfig"
       />
 
-      <NavbarThemeSwitcher />
+      <NavbarThemeCustomizer />
       <NavbarShortcuts />
       <NavBarNotifications class="me-2" />
       <UserProfile />
@@ -50,8 +50,5 @@ import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
     <template #footer>
       <Footer />
     </template>
-
-    <!-- 👉 Customizer -->
-    <TheCustomizer />
   </HorizontalNavLayout>
 </template>
